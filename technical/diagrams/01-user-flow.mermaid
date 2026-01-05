@@ -1,0 +1,21 @@
+flowchart LR
+    Landing["Landing Page"] --> Focus["Focus Search Bar"]
+    Focus --> Dropdown["Dropdown Shows Active Convos"]
+    
+    Dropdown --> Type["Type Topic"]
+    Dropdown --> Click["Click Convo"]
+    
+    Type --> Match{Exists?}
+    Match --> |Yes| Convo
+    Match --> |No| Empty["Empty Convo"]
+    
+    Click --> Convo["Convo View"]
+    Empty --> Convo
+    
+    Convo --> Send["Send Message"]
+    Send --> Auth{Logged In?}
+    Auth --> |Yes| Sent["Message Sent"]
+    Auth --> |No| Login["Auth Modal"]
+    Login --> Sent
+    
+    Sent --> Convo
