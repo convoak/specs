@@ -1,0 +1,42 @@
+erDiagram
+    User ||--o{ Message : sends
+    User ||--o{ Convo : creates
+    User ||--o{ UserConvoVisit : tracks
+    
+    Convo ||--o{ Message : contains
+    Convo ||--o{ UserConvoVisit : visited_by
+    
+    User {
+        uuid id PK
+        string email UK
+        string name
+        string avatar_url
+        enum auth_provider
+        boolean is_online
+        timestamp last_seen_at
+        timestamp created_at
+    }
+    
+    Convo {
+        uuid id PK
+        string topic
+        string slug UK
+        uuid created_by FK
+        timestamp last_activity_at
+        timestamp created_at
+    }
+    
+    Message {
+        uuid id PK
+        uuid convo_id FK
+        uuid user_id FK
+        text content
+        timestamp created_at
+    }
+    
+    UserConvoVisit {
+        uuid id PK
+        uuid user_id FK
+        uuid convo_id FK
+        timestamp last_visited
+    }
