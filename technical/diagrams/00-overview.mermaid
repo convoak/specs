@@ -1,0 +1,49 @@
+---
+title: Convoak System Overview
+---
+flowchart TB
+    subgraph Client["Browser"]
+        UI[React SPA]
+        WS[WebSocket Client]
+    end
+
+    subgraph Supabase["Supabase Platform"]
+        Auth[Auth Service]
+        API[PostgREST API]
+        Realtime[Realtime Server]
+        
+        subgraph Database["PostgreSQL"]
+            Tables[(Tables)]
+            RLS[Row Level Security]
+            Functions[Functions & Triggers]
+        end
+    end
+
+    subgraph External["External Services"]
+        Resend[Resend Email]
+        Google[Google OAuth]
+        Microsoft[Microsoft OAuth]
+    end
+
+    UI -->|REST| API
+    UI -->|Auth| Auth
+    WS <-->|Subscribe| Realtime
+    
+    API --> RLS
+    RLS --> Tables
+    Tables --> Functions
+    Functions --> Realtime
+    
+    Auth -->|OTP Email| Resend
+    Auth <-->|OAuth| Google
+    Auth <-->|OAuth| Microsoft
+
+    classDef client fill:#e0f2fe,stroke:#0284c7
+    classDef supabase fill:#d1fae5,stroke:#059669
+    classDef db fill:#fef3c7,stroke:#d97706
+    classDef external fill:#f3e8ff,stroke:#9333ea
+    
+    class UI,WS client
+    class Auth,API,Realtime supabase
+    class Tables,RLS,Functions db
+    class Resend,Google,Microsoft external
