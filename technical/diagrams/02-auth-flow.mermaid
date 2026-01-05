@@ -1,0 +1,22 @@
+flowchart TD
+    Trigger["User Tries to Send Message"] --> Check{Authenticated?}
+    
+    Check --> |Yes| Send["Send Message"]
+    Check --> |No| Modal["Auth Modal"]
+    
+    Modal --> Email["Email OTP"]
+    Modal --> Google["Google OAuth"]
+    Modal --> Microsoft["Microsoft OAuth"]
+    
+    Email --> EnterEmail["Enter Email"]
+    EnterEmail --> OTP["Receive 6-Digit Code"]
+    OTP --> Verify["Enter Code"]
+    Verify --> |Valid| Done
+    Verify --> |Invalid| OTP
+    
+    Google --> OAuth["OAuth Redirect"]
+    Microsoft --> OAuth
+    OAuth --> Done["Authenticated"]
+    
+    Done --> Return["Return to Convo"]
+    Return --> Send
