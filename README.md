@@ -1,4 +1,4 @@
-# Convoak Specifications
+# README
 
 **Search that returns people, not pages.**
 
@@ -46,7 +46,7 @@ convoak-specs/
 ## Design Principles
 
 - **Minimal interface:** Google-inspired simplicity
-- **Typography:** Varela Round throughout
+- **Typography:** Google Sans
 - **Branding:** Tree ring imagery (oak cross-section)
 - **Hierarchy:** Color and spacing over font weight
 - **Accessibility:** Anonymous browsing with progressive authentication
@@ -67,9 +67,3 @@ Embrace fragmentation as a feature. Natural conversation splitting through exact
 1. Review `/technical/` for implementation specifications
 2. Explore `/design/prototypes/` for visual references
 3. Check `/decisions/` for architectural rationale
-
-## Contact
-
-Built by Brandon  
-Project: Convoak  
-Focus: Specification-first development for rapid, aligned implementation
