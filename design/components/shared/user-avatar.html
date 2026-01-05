@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>User Avatar Component</title>
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            zinc: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            border: 'hsl(var(--border))',
+            ring: 'hsl(var(--ring))',
+            primary: {
+              DEFAULT: 'hsl(var(--primary))',
+              foreground: 'hsl(var(--primary-foreground))',
+            },
+            secondary: {
+              DEFAULT: 'hsl(var(--secondary))',
+              foreground: 'hsl(var(--secondary-foreground))',
+            },
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+            accent: {
+              DEFAULT: 'hsl(var(--accent))',
+              foreground: 'hsl(var(--accent-foreground))',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --primary: 240 5.9% 10%;
+      --primary-foreground: 0 0% 98%;
+      --secondary: 240 4.8% 95.9%;
+      --secondary-foreground: 240 5.9% 10%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+      --accent: 240 4.8% 95.9%;
+      --accent-foreground: 240 5.9% 10%;
+      --border: 240 5.9% 90%;
+      --ring: 240 5.9% 10%;
+    }
+
+    .dark {
+      --background: 240 10% 9.8%;
+      --foreground: 0 0% 98%;
+      --primary: 0 0% 98%;
+      --primary-foreground: 240 5.9% 10%;
+      --secondary: 240 3.7% 15.9%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+      --border: 240 3.7% 15.9%;
+      --ring: 240 4.9% 83.9%;
+    }
+
+    body {
+      font-family: 'Google Sans', system-ui, sans-serif;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+
+    /* User Avatar Gradient */
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .user-avatar:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    .user-avatar:focus-visible {
+      outline: 2px solid hsl(var(--ring));
+      outline-offset: 2px;
+    }
+
+    /* Larger demo avatar */
+    .user-avatar-large {
+      width: 64px;
+      height: 64px;
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <!-- 
+    User Avatar Component
+    =====================
+    Displays authenticated user's avatar as a gradient circle.
+    - Shown when user is authenticated (replaces sign-in-button)
+    - Clicking opens profile dropdown (future component)
+    - Gradient is generated randomly per user session (or could be deterministic based on user ID)
+    - Accessible with keyboard navigation
+    
+    React: Map to a UserAvatar component, gradient can be seeded from user ID for consistency
+  -->
+
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="text-center space-y-8">
+      <h1 class="text-2xl font-medium text-foreground mb-8">User Avatar Component</h1>
+      
+      <!-- User Avatar (Default Size) -->
+      <div class="flex flex-col items-center gap-2">
+        <div 
+          id="user-avatar"
+          class="user-avatar"
+          role="button"
+          tabindex="0"
+          aria-label="User profile"
+        ></div>
+        <p class="text-xs text-muted-foreground">36×36px (header size)</p>
+      </div>
+
+      <!-- User Avatar (Large) -->
+      <div class="flex flex-col items-center gap-2 mt-8">
+        <div 
+          id="user-avatar-large"
+          class="user-avatar user-avatar-large"
+          role="button"
+          tabindex="0"
+          aria-label="User profile"
+        ></div>
+        <p class="text-xs text-muted-foreground">64×64px (profile size)</p>
+      </div>
+
+      <p class="text-sm text-muted-foreground mt-4">
+        Click avatar to open profile dropdown (future)<br>
+        Click "Regenerate" to see gradient variation
+      </p>
+
+      <!-- Regenerate Button -->
+      <button 
+        id="regenerate-btn"
+        class="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 h-9 px-4 py-2"
+      >
+        Regenerate Gradient
+      </button>
+
+      <!-- Gradient Gallery -->
+      <div class="mt-12 space-y-4">
+        <h2 class="text-lg font-medium text-foreground">Gradient Examples</h2>
+        <p class="text-xs text-muted-foreground">These show the variety of possible gradients</p>
+        
+        <div id="gradient-gallery" class="flex flex-wrap gap-3 justify-center">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Theme Toggle for Testing -->
+      <div class="mt-12 pt-8 border-t border-border">
+        <button 
+          id="theme-toggle"
+          class="text-xs text-muted-foreground hover:text-foreground"
+        >
+          Toggle dark mode to preview
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Generate random gradient colors
+    function generateRandomGradient() {
+      const colors = [
+        '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+        '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B500', '#6C5CE7',
+        '#A29BFE', '#FD79A8', '#FDCB6E', '#6C5CE7', '#00B894',
+        '#00CEC9', '#0984E3', '#B2BEC3', '#DFE6E9', '#74B9FF'
+      ];
+      
+      const color1 = colors[Math.floor(Math.random() * colors.length)];
+      let color2 = colors[Math.floor(Math.random() * colors.length)];
+      
+      // Ensure two different colors
+      while (color2 === color1) {
+        color2 = colors[Math.floor(Math.random() * colors.length)];
+      }
+      
+      const angle = Math.floor(Math.random() * 360);
+      return `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+    }
+
+    // Initialize avatars
+    function initializeAvatars() {
+      const gradient = generateRandomGradient();
+      document.getElementById('user-avatar').style.background = gradient;
+      document.getElementById('user-avatar-large').style.background = gradient;
+    }
+
+    // Generate gradient gallery
+    function generateGallery() {
+      const gallery = document.getElementById('gradient-gallery');
+      gallery.innerHTML = '';
+      
+      for (let i = 0; i < 8; i++) {
+        const div = document.createElement('div');
+        div.className = 'user-avatar';
+        div.style.background = generateRandomGradient();
+        gallery.appendChild(div);
+      }
+    }
+
+    // Initialize on load
+    initializeAvatars();
+    generateGallery();
+
+    // Regenerate button
+    document.getElementById('regenerate-btn').addEventListener('click', () => {
+      initializeAvatars();
+      generateGallery();
+    });
+
+    // Avatar click handler
+    document.getElementById('user-avatar').addEventListener('click', () => {
+      alert('Profile dropdown would open here');
+    });
+
+    // Keyboard accessibility
+    document.getElementById('user-avatar').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        alert('Profile dropdown would open here');
+      }
+    });
+
+    // Theme toggle for testing
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+  </script>
+</body>
+</html>

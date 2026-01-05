@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="HandheldFriendly" content="true">
+  <title>Header Layout Component - Landing Page</title>
+  <!-- 
+    Header Layout Component (Landing Page)
+    ======================================
+    This is a LAYOUT component that composes shared components:
+    - theme-toggle (components/shared/theme-toggle.html)
+    - sign-in-button (components/shared/sign-in-button.html)
+    - user-avatar (components/shared/user-avatar.html)
+    - hamburger-menu (components/shared/hamburger-menu.html)
+    
+    Desktop: theme-toggle (left) | sign-in/avatar (right)
+    Mobile:  hamburger + theme-toggle (left) | sign-in/avatar (right)
+    
+    React: Compose as a Header component importing shared components
+  -->
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.ico">
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            // shadcn-zinc color palette
+            zinc: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            border: 'hsl(var(--border))',
+            ring: 'hsl(var(--ring))',
+            primary: {
+              DEFAULT: 'hsl(var(--primary))',
+              foreground: 'hsl(var(--primary-foreground))',
+            },
+            secondary: {
+              DEFAULT: 'hsl(var(--secondary))',
+              foreground: 'hsl(var(--secondary-foreground))',
+            },
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+            accent: {
+              DEFAULT: 'hsl(var(--accent))',
+              foreground: 'hsl(var(--accent-foreground))',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    /* shadcn-zinc CSS variables for light mode */
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --card: 0 0% 100%;
+      --card-foreground: 240 10% 3.9%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 240 10% 3.9%;
+      --primary: 240 5.9% 10%;
+      --primary-foreground: 0 0% 98%;
+      --secondary: 240 4.8% 95.9%;
+      --secondary-foreground: 240 5.9% 10%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+      --accent: 240 4.8% 95.9%;
+      --accent-foreground: 240 5.9% 10%;
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 240 5.9% 90%;
+      --input: 240 5.9% 90%;
+      --ring: 240 5.9% 10%;
+      --radius: 0.5rem;
+    }
+
+    /* shadcn-zinc CSS variables for dark mode */
+    .dark {
+      --background: 240 10% 9.8%;
+      --foreground: 0 0% 98%;
+      --card: 240 10% 3.9%;
+      --card-foreground: 0 0% 98%;
+      --popover: 240 10% 3.9%;
+      --popover-foreground: 0 0% 98%;
+      --primary: 0 0% 98%;
+      --primary-foreground: 240 5.9% 10%;
+      --secondary: 240 3.7% 15.9%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 240 3.7% 15.9%;
+      --input: 240 3.7% 15.9%;
+      --ring: 240 4.9% 83.9%;
+    }
+
+    body {
+      font-family: 'Google Sans', system-ui, sans-serif;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+
+    /* User Avatar Gradient */
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .user-avatar:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    /* Prevent zoom on iOS input focus */
+    @supports (-webkit-touch-callout: none) {
+      input, select, textarea {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <!-- Header Layout Component -->
+  <header class="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div class="w-full flex h-16 items-center justify-between px-4 sm:px-6">
+
+      <!-- === DESKTOP LEFT: Theme Toggle === -->
+      <!-- See: components/shared/theme-toggle.html -->
+      <div class="hidden md:flex items-center gap-4">
+        <button 
+          id="theme-toggle-desktop"
+          class="inline-flex items-center justify-center rounded-full p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Toggle theme"
+        >
+          <i data-lucide="sun" class="h-5 w-5 dark:hidden"></i>
+          <i data-lucide="moon" class="h-5 w-5 hidden dark:block"></i>
+        </button>
+      </div>
+
+      <!-- === DESKTOP RIGHT: Sign In Button / User Avatar === -->
+      <!-- See: components/shared/sign-in-button.html, components/shared/user-avatar.html -->
+      <div class="hidden md:flex items-center gap-4">
+        <button 
+          id="signin-btn-desktop"
+          class="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+        >
+          Sign In
+        </button>
+        <div 
+          id="user-avatar-desktop"
+          class="user-avatar hidden"
+          role="button"
+          tabindex="0"
+          aria-label="User profile"
+        ></div>
+      </div>
+
+      <!-- === MOBILE LEFT: Hamburger Menu + Theme Toggle === -->
+      <!-- See: components/shared/hamburger-menu.html, components/shared/theme-toggle.html -->
+      <div class="flex md:hidden items-center gap-2">
+        <button 
+          class="inline-flex items-center justify-center rounded-full p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Menu"
+        >
+          <i data-lucide="align-justify" class="h-5 w-5"></i>
+        </button>
+        <button 
+          id="theme-toggle-mobile"
+          class="inline-flex items-center justify-center rounded-full p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Toggle theme"
+        >
+          <i data-lucide="sun" class="h-5 w-5 dark:hidden"></i>
+          <i data-lucide="moon" class="h-5 w-5 hidden dark:block"></i>
+        </button>
+      </div>
+
+      <!-- === MOBILE RIGHT: Sign In Button / User Avatar === -->
+      <!-- See: components/shared/sign-in-button.html, components/shared/user-avatar.html -->
+      <div class="flex md:hidden items-center gap-2">
+        <button 
+          id="signin-btn-mobile"
+          class="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+        >
+          Sign In
+        </button>
+        <div 
+          id="user-avatar-mobile"
+          class="user-avatar hidden"
+          role="button"
+          tabindex="0"
+          aria-label="User profile"
+        ></div>
+      </div>
+    </div>
+  </header>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Generate random gradient colors
+    function generateRandomGradient() {
+      const colors = [
+        '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+        '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B500', '#6C5CE7',
+        '#A29BFE', '#FD79A8', '#FDCB6E', '#6C5CE7', '#00B894',
+        '#00CEC9', '#0984E3', '#B2BEC3', '#DFE6E9', '#74B9FF'
+      ];
+      
+      const color1 = colors[Math.floor(Math.random() * colors.length)];
+      let color2 = colors[Math.floor(Math.random() * colors.length)];
+      
+      // Ensure two different colors
+      while (color2 === color1) {
+        color2 = colors[Math.floor(Math.random() * colors.length)];
+      }
+      
+      const angle = Math.floor(Math.random() * 360);
+      return `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+    }
+
+    // Initialize avatars with random gradients
+    const desktopAvatar = document.getElementById('user-avatar-desktop');
+    const mobileAvatar = document.getElementById('user-avatar-mobile');
+    const gradient = generateRandomGradient();
+    
+    desktopAvatar.style.background = gradient;
+    mobileAvatar.style.background = gradient;
+
+    // Toggle functionality for desktop
+    const signinBtnDesktop = document.getElementById('signin-btn-desktop');
+    const userAvatarDesktop = document.getElementById('user-avatar-desktop');
+    
+    signinBtnDesktop.addEventListener('click', () => {
+      signinBtnDesktop.classList.add('hidden');
+      userAvatarDesktop.classList.remove('hidden');
+    });
+    
+    userAvatarDesktop.addEventListener('click', () => {
+      userAvatarDesktop.classList.add('hidden');
+      signinBtnDesktop.classList.remove('hidden');
+    });
+    
+    // Keyboard accessibility for desktop avatar
+    userAvatarDesktop.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        userAvatarDesktop.classList.add('hidden');
+        signinBtnDesktop.classList.remove('hidden');
+      }
+    });
+
+    // Toggle functionality for mobile
+    const signinBtnMobile = document.getElementById('signin-btn-mobile');
+    const userAvatarMobile = document.getElementById('user-avatar-mobile');
+    
+    signinBtnMobile.addEventListener('click', () => {
+      signinBtnMobile.classList.add('hidden');
+      userAvatarMobile.classList.remove('hidden');
+    });
+    
+    userAvatarMobile.addEventListener('click', () => {
+      userAvatarMobile.classList.add('hidden');
+      signinBtnMobile.classList.remove('hidden');
+    });
+    
+    // Keyboard accessibility for mobile avatar
+    userAvatarMobile.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        userAvatarMobile.classList.add('hidden');
+        signinBtnMobile.classList.remove('hidden');
+      }
+    });
+
+    // Theme toggle functionality
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+      
+      // Reinitialize icons after theme change
+      lucide.createIcons();
+    }
+
+    // Initialize theme from localStorage or system preference
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+
+    // Theme toggle event listeners
+    document.getElementById('theme-toggle-desktop').addEventListener('click', toggleTheme);
+    document.getElementById('theme-toggle-mobile').addEventListener('click', toggleTheme);
+
+    // Initialize theme on page load
+    initializeTheme();
+  </script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hamburger Menu Component</title>
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            zinc: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            border: 'hsl(var(--border))',
+            ring: 'hsl(var(--ring))',
+            primary: {
+              DEFAULT: 'hsl(var(--primary))',
+              foreground: 'hsl(var(--primary-foreground))',
+            },
+            secondary: {
+              DEFAULT: 'hsl(var(--secondary))',
+              foreground: 'hsl(var(--secondary-foreground))',
+            },
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+            accent: {
+              DEFAULT: 'hsl(var(--accent))',
+              foreground: 'hsl(var(--accent-foreground))',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --primary: 240 5.9% 10%;
+      --primary-foreground: 0 0% 98%;
+      --secondary: 240 4.8% 95.9%;
+      --secondary-foreground: 240 5.9% 10%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+      --accent: 240 4.8% 95.9%;
+      --accent-foreground: 240 5.9% 10%;
+      --border: 240 5.9% 90%;
+      --ring: 240 5.9% 10%;
+    }
+
+    .dark {
+      --background: 240 10% 9.8%;
+      --foreground: 0 0% 98%;
+      --primary: 0 0% 98%;
+      --primary-foreground: 240 5.9% 10%;
+      --secondary: 240 3.7% 15.9%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+      --border: 240 3.7% 15.9%;
+      --ring: 240 4.9% 83.9%;
+    }
+
+    body {
+      font-family: 'Google Sans', system-ui, sans-serif;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+
+    /* Mobile menu slide animation */
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .mobile-menu.open {
+      transform: translateX(0);
+    }
+
+    /* Backdrop fade */
+    .menu-backdrop {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .menu-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <!-- 
+    Hamburger Menu Component
+    ========================
+    Mobile navigation menu with slide-out panel.
+    - Visible only on mobile (md:hidden in header context)
+    - Uses text-align-justify icon (hamburger style)
+    - Slides in from left with backdrop overlay
+    - Close via X button or clicking backdrop
+    - Menu content is placeholder (define actual nav items per page)
+    
+    React: Map to a Sheet component from shadcn/ui or custom mobile nav
+  -->
+
+  <div class="min-h-screen">
+    <!-- Demo Header Bar -->
+    <header class="sticky top-0 z-40 w-full bg-background/95 backdrop-blur border-b border-border">
+      <div class="flex h-16 items-center px-4">
+        <!-- Hamburger Button -->
+        <button 
+          id="hamburger-btn"
+          class="inline-flex items-center justify-center rounded-full p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <i data-lucide="align-justify" class="h-5 w-5"></i>
+        </button>
+
+        <span class="ml-4 text-sm text-muted-foreground">Click hamburger to open menu</span>
+      </div>
+    </header>
+
+    <!-- Backdrop Overlay -->
+    <div 
+      id="menu-backdrop"
+      class="menu-backdrop fixed inset-0 z-40 bg-black/50"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Mobile Menu Panel -->
+    <nav 
+      id="mobile-menu"
+      class="mobile-menu fixed top-0 left-0 z-50 h-full w-72 bg-background border-r border-border shadow-lg"
+      aria-label="Mobile navigation"
+    >
+      <!-- Menu Header -->
+      <div class="flex h-16 items-center justify-between px-4 border-b border-border">
+        <span class="font-medium text-foreground">Menu</span>
+        <button 
+          id="close-menu-btn"
+          class="inline-flex items-center justify-center rounded-full p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Close menu"
+        >
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <!-- Menu Content (Placeholder) -->
+      <div class="p-4 space-y-2">
+        <p class="text-xs text-muted-foreground uppercase tracking-wider mb-4">Navigation</p>
+        
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-foreground hover:bg-accent transition-colors">
+          <i data-lucide="home" class="h-5 w-5"></i>
+          <span>Home</span>
+        </a>
+        
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-foreground hover:bg-accent transition-colors">
+          <i data-lucide="message-circle" class="h-5 w-5"></i>
+          <span>Conversations</span>
+        </a>
+        
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-foreground hover:bg-accent transition-colors">
+          <i data-lucide="settings" class="h-5 w-5"></i>
+          <span>Settings</span>
+        </a>
+
+        <div class="border-t border-border my-4"></div>
+
+        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground transition-colors">
+          <i data-lucide="help-circle" class="h-5 w-5"></i>
+          <span>Help</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="p-4">
+      <div class="max-w-md mx-auto text-center mt-12 space-y-4">
+        <h1 class="text-2xl font-medium text-foreground">Hamburger Menu Component</h1>
+        <p class="text-sm text-muted-foreground">
+          This component is mobile-only in the header.<br>
+          Menu content is placeholder—customize per page.
+        </p>
+
+        <!-- Component States -->
+        <div class="mt-8 p-4 rounded-lg bg-muted text-left">
+          <h2 class="text-sm font-medium text-foreground mb-2">States</h2>
+          <ul class="text-xs text-muted-foreground space-y-1">
+            <li>• <strong>Closed:</strong> Only hamburger icon visible</li>
+            <li>• <strong>Open:</strong> Panel slides in, backdrop shown</li>
+            <li>• <strong>Close triggers:</strong> X button, backdrop click, Escape key</li>
+          </ul>
+        </div>
+
+        <!-- Theme Toggle for Testing -->
+        <div class="mt-8 pt-8 border-t border-border">
+          <button 
+            id="theme-toggle"
+            class="text-xs text-muted-foreground hover:text-foreground"
+          >
+            Toggle dark mode to preview
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const closeMenuBtn = document.getElementById('close-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuBackdrop = document.getElementById('menu-backdrop');
+
+    function openMenu() {
+      mobileMenu.classList.add('open');
+      menuBackdrop.classList.add('open');
+      hamburgerBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      mobileMenu.classList.remove('open');
+      menuBackdrop.classList.remove('open');
+      hamburgerBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    // Event listeners
+    hamburgerBtn.addEventListener('click', openMenu);
+    closeMenuBtn.addEventListener('click', closeMenu);
+    menuBackdrop.addEventListener('click', closeMenu);
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+        closeMenu();
+      }
+    });
+
+    // Theme toggle for testing
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
