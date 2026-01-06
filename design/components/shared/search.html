@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Search Component</title>
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            zinc: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <style>
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+    }
+    
+    .dark {
+      --background: 240 6% 10%;
+      --foreground: 0 0% 98%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+    }
+  </style>
+</head>
+<body class="antialiased bg-background min-h-screen flex items-center justify-center p-4">
+  
+  <!-- 
+    Search Component
+    ================
+    A responsive search input with desktop inline view and mobile fullscreen modal.
+    
+    Features:
+    - Desktop: 688px (w-[43rem]) x 52px (h-13) rounded-full search bar
+    - Light mode: white bg, outline-zinc-500 outline-1
+    - Dark mode: bg-zinc-800, no outline
+    - Search icon on right side
+    - Clear (x) icon appears when typing (left of search icon)
+    - Placeholder: "What's on your mind?"
+    - Text size: text-base (16px)
+    
+    Mobile Behavior:
+    - On focus/click, expands to fullscreen modal
+    - Modal header: arrow-left (back) | search input | search icon
+    - Clicking back arrow closes modal
+    - Clear button clears text but keeps modal open
+    
+    React Implementation:
+    - Use useState for: inputValue, isMobileModalOpen
+    - Use useEffect to detect mobile breakpoint
+    - Handle focus/blur events for modal trigger
+    - Consider useMediaQuery hook for responsive behavior
+    
+    Usage:
+    <Search onSearch={(query) => handleSearch(query)} />
+  -->
+  
+  <!-- ========== SEARCH COMPONENT ========== -->
+  <div class="search-component w-full flex justify-center">
+    
+    <!-- Desktop Search Bar -->
+    <div class="hidden md:block w-full max-w-[43rem]">
+      <div class="relative w-full h-13 flex items-center">
+        <div class="
+          w-full h-[52px] 
+          flex items-center 
+          rounded-full 
+          bg-white outline outline-1 outline-zinc-300
+          dark:bg-zinc-800 dark:outline-none
+          transition-colors duration-200
+          px-5
+        ">
+          <!-- Search Input -->
+          <input 
+            type="text" 
+            id="desktop-search-input"
+            placeholder="What's on your mind?"
+            class="
+              flex-1 
+              bg-transparent 
+              text-base text-foreground 
+              placeholder:text-muted-foreground 
+              focus:outline-none
+            "
+            oninput="handleDesktopInput(this)"
+          >
+          
+          <!-- Clear Button (hidden by default, shown when typing) -->
+          <button 
+            id="desktop-clear-btn"
+            class="hidden items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors"
+            onclick="clearDesktopSearch()"
+          >
+            <i data-lucide="x" class="h-5 w-5"></i>
+          </button>
+          
+          <!-- Search Icon -->
+          <button class="flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors">
+            <i data-lucide="search" class="h-5 w-5"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile Search Trigger -->
+    <div class="md:hidden w-full">
+      <button 
+        id="mobile-search-trigger"
+        onclick="openMobileSearch()"
+        class="
+          w-full max-w-md h-[52px] 
+          flex items-center 
+          rounded-full 
+          bg-white outline outline-1 outline-zinc-300
+          dark:bg-zinc-800 dark:outline-none
+          transition-colors duration-200
+          px-5
+        "
+      >
+        <span class="flex-1 text-left text-base text-muted-foreground">What's on your mind?</span>
+        <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
+      </button>
+    </div>
+    
+    <!-- Mobile Fullscreen Modal -->
+    <div 
+      id="mobile-search-modal"
+      class="
+        fixed inset-0 z-50 
+        bg-background 
+        transform translate-x-full
+        transition-transform duration-300 ease-in-out
+        md:hidden
+      "
+    >
+      <!-- Modal Header -->
+      <div class="flex items-center h-16 px-2">
+        <!-- Back Arrow Button -->
+        <button 
+          onclick="closeMobileSearch()"
+          class="flex items-center justify-center p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-full transition-colors"
+        >
+          <i data-lucide="arrow-left" class="h-5 w-5"></i>
+        </button>
+        
+        <!-- Search Input Container -->
+        <div class="
+          flex-1 h-11
+          flex items-center 
+          rounded-full 
+          bg-transparent
+          transition-colors duration-200
+          pl-1 pr-2
+        ">
+          <input 
+            type="text" 
+            id="mobile-search-input"
+            placeholder="What's on your mind?"
+            class="
+              w-full
+              bg-transparent 
+              text-base text-foreground 
+              placeholder:text-muted-foreground 
+              focus:outline-none
+            "
+            oninput="handleMobileInput(this)"
+          >
+        </div>
+        
+        <!-- Action Buttons Group -->
+        <div class="flex items-center">
+          <!-- Clear Button (hidden by default, shown when typing) -->
+          <button 
+            id="mobile-clear-btn"
+            class="hidden items-center justify-center p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-full transition-colors"
+            onclick="clearMobileSearch()"
+          >
+            <i data-lucide="x" class="h-5 w-5"></i>
+          </button>
+          
+          <!-- Search Button -->
+          <button 
+            onclick="submitMobileSearch()"
+            class="flex items-center justify-center p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-full transition-colors"
+          >
+            <i data-lucide="search" class="h-5 w-5"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Modal Body (for search results/suggestions) -->
+      <div class="px-4 py-2">
+        <!-- Search results or suggestions would go here -->
+      </div>
+    </div>
+    
+  </div>
+  <!-- ========== END SEARCH COMPONENT ========== -->
+  
+  
+  <!-- Demo: Theme Toggle for Testing -->
+  <button 
+    onclick="toggleTheme()" 
+    class="fixed bottom-4 right-4 px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium"
+  >
+    Toggle Theme
+  </button>
+  
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Theme initialization
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+      lucide.createIcons();
+    }
+    
+    // Desktop Search Functions
+    function handleDesktopInput(input) {
+      const clearBtn = document.getElementById('desktop-clear-btn');
+      if (input.value.length > 0) {
+        clearBtn.classList.remove('hidden');
+        clearBtn.classList.add('flex');
+      } else {
+        clearBtn.classList.add('hidden');
+        clearBtn.classList.remove('flex');
+      }
+    }
+    
+    function clearDesktopSearch() {
+      const input = document.getElementById('desktop-search-input');
+      const clearBtn = document.getElementById('desktop-clear-btn');
+      input.value = '';
+      clearBtn.classList.add('hidden');
+      clearBtn.classList.remove('flex');
+      input.focus();
+    }
+    
+    // Mobile Search Functions
+    function openMobileSearch() {
+      const modal = document.getElementById('mobile-search-modal');
+      const input = document.getElementById('mobile-search-input');
+      modal.classList.remove('translate-x-full');
+      modal.classList.add('translate-x-0');
+      document.body.style.overflow = 'hidden';
+      // Focus input after transition
+      setTimeout(() => input.focus(), 300);
+    }
+    
+    function closeMobileSearch() {
+      const modal = document.getElementById('mobile-search-modal');
+      modal.classList.remove('translate-x-0');
+      modal.classList.add('translate-x-full');
+      document.body.style.overflow = '';
+    }
+    
+    function handleMobileInput(input) {
+      const clearBtn = document.getElementById('mobile-clear-btn');
+      if (input.value.length > 0) {
+        clearBtn.classList.remove('hidden');
+        clearBtn.classList.add('flex');
+      } else {
+        clearBtn.classList.add('hidden');
+        clearBtn.classList.remove('flex');
+      }
+    }
+    
+    function clearMobileSearch() {
+      const input = document.getElementById('mobile-search-input');
+      const clearBtn = document.getElementById('mobile-clear-btn');
+      input.value = '';
+      clearBtn.classList.add('hidden');
+      clearBtn.classList.remove('flex');
+      input.focus(); // Keep modal open, refocus input
+    }
+    
+    function submitMobileSearch() {
+      const input = document.getElementById('mobile-search-input');
+      const query = input.value.trim();
+      if (query) {
+        console.log('Search submitted:', query);
+        // In React: onSearch(query)
+      }
+    }
+    
+    initializeTheme();
+  </script>
+</body>
+</html>

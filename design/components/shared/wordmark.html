@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Wordmark Component</title>
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+    }
+    
+    .dark {
+      --background: 240 6% 10%;
+      --foreground: 0 0% 98%;
+    }
+  </style>
+</head>
+<body class="antialiased bg-background min-h-screen flex items-center justify-center">
+  
+  <!-- 
+    Wordmark Component
+    ==================
+    Displays the Convoak wordmark SVG with automatic theme adaptation.
+    
+    Features:
+    - References /assets/wordmark.svg
+    - Uses CSS invert filter for dark mode (dark:invert)
+    - SVG is black by default, inverts to white in dark mode
+    
+    Sizing:
+    - Default: 272px wide (reasonable scale from 327px original)
+    - Maintains aspect ratio automatically
+    
+    React Implementation:
+    - Simple <img> component with className for dark mode
+    - Could also be inline SVG with currentColor for more control
+    
+    Usage:
+    <Wordmark />
+    <Wordmark className="w-64" /> // Custom width
+  -->
+  
+  <!-- ========== WORDMARK COMPONENT ========== -->
+  <div class="wordmark">
+    <img 
+      src="../../assets/wordmark.svg" 
+      alt="Convoak" 
+      class="h-14 md:h-16 w-auto dark:invert transition-all duration-200"
+    >
+  </div>
+  <!-- ========== END WORDMARK COMPONENT ========== -->
+  
+  
+  <!-- Demo: Theme Toggle for Testing -->
+  <button 
+    onclick="toggleTheme()" 
+    class="fixed bottom-4 right-4 px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium"
+  >
+    Toggle Theme
+  </button>
+  
+  <script>
+    // Theme initialization
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+    
+    initializeTheme();
+  </script>
+</body>
+</html>

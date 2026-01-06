@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="HandheldFriendly" content="true">
+  <title>Landing - Footer Component</title>
+  <!-- 
+    Footer Layout Component (Landing Page)
+    ======================================
+    A simple footer component that sits at the bottom of the page.
+    
+    Desktop: Copyright text (left) | Links (right)
+    Mobile:  Links only (right), copyright hidden
+    
+    React Implementation:
+    export function LandingFooter() {
+      return (
+        <footer className="w-full bg-transparent">
+          <div className="w-full flex h-16 items-center justify-between px-4 sm:px-6">
+            <span className="hidden md:block text-base text-muted-foreground">
+              Convoak © 2025. All rights reserved.
+            </span>
+            <div className="flex items-center gap-4 md:gap-6">
+              <a href="#" target="_blank" className="text-sm md:text-base text-muted-foreground hover:text-foreground transition-colors">Terms</a>
+              <a href="#" target="_blank" className="text-sm md:text-base text-muted-foreground hover:text-foreground transition-colors">Privacy</a>
+              <a href="#" target="_blank" className="text-sm md:text-base text-muted-foreground hover:text-foreground transition-colors">About</a>
+            </div>
+          </div>
+        </footer>
+      );
+    }
+    
+    Usage:
+    <Header />
+    <LandingBody />
+    <LandingFooter />
+  -->
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.ico">
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            // shadcn-zinc color palette
+            zinc: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            border: 'hsl(var(--border))',
+            ring: 'hsl(var(--ring))',
+            primary: {
+              DEFAULT: 'hsl(var(--primary))',
+              foreground: 'hsl(var(--primary-foreground))',
+            },
+            secondary: {
+              DEFAULT: 'hsl(var(--secondary))',
+              foreground: 'hsl(var(--secondary-foreground))',
+            },
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+            accent: {
+              DEFAULT: 'hsl(var(--accent))',
+              foreground: 'hsl(var(--accent-foreground))',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    /* shadcn-zinc CSS variables for light mode */
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --card: 0 0% 100%;
+      --card-foreground: 240 10% 3.9%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 240 10% 3.9%;
+      --primary: 240 5.9% 10%;
+      --primary-foreground: 0 0% 98%;
+      --secondary: 240 4.8% 95.9%;
+      --secondary-foreground: 240 5.9% 10%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+      --accent: 240 4.8% 95.9%;
+      --accent-foreground: 240 5.9% 10%;
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 240 5.9% 90%;
+      --input: 240 5.9% 90%;
+      --ring: 240 5.9% 10%;
+      --radius: 0.5rem;
+    }
+
+    /* shadcn-zinc CSS variables for dark mode */
+    .dark {
+      --background: 240 6% 10%;
+      --foreground: 0 0% 98%;
+      --card: 240 10% 3.9%;
+      --card-foreground: 0 0% 98%;
+      --popover: 240 10% 3.9%;
+      --popover-foreground: 0 0% 98%;
+      --primary: 0 0% 98%;
+      --primary-foreground: 240 5.9% 10%;
+      --secondary: 240 3.7% 15.9%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 240 3.7% 15.9%;
+      --input: 240 3.7% 15.9%;
+      --ring: 240 4.9% 83.9%;
+    }
+
+    body {
+      font-family: 'Google Sans', system-ui, sans-serif;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+    
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Prevent zoom on iOS input focus */
+    @supports (-webkit-touch-callout: none) {
+      input, select, textarea {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <!-- Full page layout wrapper (no scroll) -->
+  <div class="h-screen flex flex-col overflow-hidden">
+    
+    <!-- Demo: Simulated Header (64px height) with theme toggle -->
+    <header class="w-full h-16 bg-transparent shrink-0">
+      <div class="w-full flex h-16 items-center justify-between px-4 sm:px-6">
+        <span class="text-sm text-muted-foreground">[Header Component]</span>
+        <button 
+          onclick="toggleTheme()" 
+          class="px-3 py-1.5 rounded-full bg-muted text-muted-foreground text-sm font-medium hover:bg-muted/80 transition-colors"
+        >
+          Toggle Theme
+        </button>
+      </div>
+    </header>
+    
+    <!-- Demo: Simulated Body (fills remaining space) -->
+    <main class="flex-1 flex flex-col items-center justify-center px-4 sm:px-6">
+      <span class="text-sm text-muted-foreground">[Body Component]</span>
+    </main>
+    
+    <!-- ========== LANDING FOOTER COMPONENT ========== -->
+    <footer class=\"w-full bg-transparent shrink-0\">
+      <div class=\"w-full flex h-16 items-center justify-center md:justify-between px-4 sm:px-6\">
+        
+        <!-- === LEFT: Copyright (Desktop only) === -->
+        <div class="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Convoak</span>
+          <i data-lucide="copyright" class="h-4 w-4"></i>
+          <span>2025. All rights reserved.</span>
+        </div>
+        
+        <!-- === RIGHT: Links (centered on mobile, right on desktop) === -->
+        <div class="flex items-center justify-center md:justify-end gap-4 md:gap-6">
+          <a 
+            href="#" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Terms
+          </a>
+          <a 
+            href="#" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Privacy
+          </a>
+          <a 
+            href="#" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            About
+          </a>
+        </div>
+        
+      </div>
+    </footer>
+    <!-- ========== END LANDING FOOTER COMPONENT ========== -->
+    
+  </div>
+  
+  <script>
+    // Theme toggle functionality
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+    
+    // Theme initialization
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    
+    initializeTheme();
+    
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

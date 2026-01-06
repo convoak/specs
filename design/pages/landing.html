@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="HandheldFriendly" content="true">
+  <title>Convoak - Landing Page</title>
+  <!-- 
+    Landing Page (Assembled)
+    ========================
+    This is the full landing page composed of:
+    - Header: theme-toggle, sign-in-button, user-avatar, hamburger-menu
+    - Body: wordmark, search
+    - Footer: copyright, links (Terms, Privacy, About)
+    
+    React Implementation:
+    import { LandingHeader } from '@/components/landing/header';
+    import { LandingBody } from '@/components/landing/body';
+    import { LandingFooter } from '@/components/landing/footer';
+    
+    export default function LandingPage() {
+      return (
+        <div className="h-screen flex flex-col overflow-hidden">
+          <LandingHeader />
+          <LandingBody />
+          <LandingFooter />
+        </div>
+      );
+    }
+  -->
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.ico">
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            // shadcn-zinc color palette
+            zinc: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            border: 'hsl(var(--border))',
+            ring: 'hsl(var(--ring))',
+            primary: {
+              DEFAULT: 'hsl(var(--primary))',
+              foreground: 'hsl(var(--primary-foreground))',
+            },
+            secondary: {
+              DEFAULT: 'hsl(var(--secondary))',
+              foreground: 'hsl(var(--secondary-foreground))',
+            },
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+            accent: {
+              DEFAULT: 'hsl(var(--accent))',
+              foreground: 'hsl(var(--accent-foreground))',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    /* shadcn-zinc CSS variables for light mode */
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --card: 0 0% 100%;
+      --card-foreground: 240 10% 3.9%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 240 10% 3.9%;
+      --primary: 240 5.9% 10%;
+      --primary-foreground: 0 0% 98%;
+      --secondary: 240 4.8% 95.9%;
+      --secondary-foreground: 240 5.9% 10%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+      --accent: 240 4.8% 95.9%;
+      --accent-foreground: 240 5.9% 10%;
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 240 5.9% 90%;
+      --input: 240 5.9% 90%;
+      --ring: 240 5.9% 10%;
+      --radius: 0.5rem;
+    }
+
+    /* shadcn-zinc CSS variables for dark mode */
+    .dark {
+      --background: 240 6% 10%;
+      --foreground: 0 0% 98%;
+      --card: 240 10% 3.9%;
+      --card-foreground: 0 0% 98%;
+      --popover: 240 10% 3.9%;
+      --popover-foreground: 0 0% 98%;
+      --primary: 0 0% 98%;
+      --primary-foreground: 240 5.9% 10%;
+      --secondary: 240 3.7% 15.9%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 240 3.7% 15.9%;
+      --input: 240 3.7% 15.9%;
+      --ring: 240 4.9% 83.9%;
+    }
+
+    body {
+      font-family: 'Google Sans', system-ui, sans-serif;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+    
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* User Avatar Gradient */
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .user-avatar:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    /* Prevent zoom on iOS input focus */
+    @supports (-webkit-touch-callout: none) {
+      input, select, textarea {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <!-- Full page layout wrapper (no scroll) -->
+  <div class="h-screen flex flex-col overflow-hidden">
+  
+    <!-- ========== HEADER ========== -->
+    <!-- Composes: theme-toggle, sign-in-button, user-avatar, hamburger-menu -->
+    <header class="w-full bg-transparent shrink-0">
+      <div class="w-full flex h-16 items-center justify-between px-4 sm:px-6">
+
+        <!-- === DESKTOP LEFT: Theme Toggle === -->
+        <div class="hidden md:flex items-center gap-4">
+          <button 
+            id="theme-toggle-desktop"
+            class="inline-flex items-center justify-center rounded-full p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            aria-label="Toggle theme"
+          >
+            <i data-lucide="sun" class="h-5 w-5 dark:hidden"></i>
+            <i data-lucide="moon" class="h-5 w-5 hidden dark:block"></i>
+          </button>
+        </div>
+
+        <!-- === DESKTOP RIGHT: Sign In Button / User Avatar === -->
+        <div class="hidden md:flex items-center gap-4">
+          <button 
+            id="signin-btn-desktop"
+            class="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+          >
+            Sign In
+          </button>
+          <div 
+            id="user-avatar-desktop"
+            class="user-avatar hidden"
+            role="button"
+            tabindex="0"
+            aria-label="User profile"
+          ></div>
+        </div>
+
+        <!-- === MOBILE LEFT: Hamburger Menu + Theme Toggle === -->
+        <div class="flex md:hidden items-center gap-2">
+          <button 
+            class="inline-flex items-center justify-center rounded-full p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            aria-label="Menu"
+          >
+            <i data-lucide="align-justify" class="h-5 w-5"></i>
+          </button>
+          <button 
+            id="theme-toggle-mobile"
+            class="inline-flex items-center justify-center rounded-full p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            aria-label="Toggle theme"
+          >
+            <i data-lucide="sun" class="h-5 w-5 dark:hidden"></i>
+            <i data-lucide="moon" class="h-5 w-5 hidden dark:block"></i>
+          </button>
+        </div>
+
+        <!-- === MOBILE RIGHT: Sign In Button / User Avatar === -->
+        <div class="flex md:hidden items-center gap-2">
+          <button 
+            id="signin-btn-mobile"
+            class="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+          >
+            Sign In
+          </button>
+          <div 
+            id="user-avatar-mobile"
+            class="user-avatar hidden"
+            role="button"
+            tabindex="0"
+            aria-label="User profile"
+          ></div>
+        </div>
+      </div>
+    </header>
+    <!-- ========== END HEADER ========== -->
+
+    <!-- ========== BODY ========== -->
+    <!-- Composes: wordmark, search -->
+    <main class="flex-1 flex flex-col items-center pt-[12vh] md:pt-[20vh] px-4 sm:px-6 overflow-hidden">
+      
+      <!-- Wordmark Component -->
+      <div class="wordmark mb-10">
+        <img 
+          src="../assets/wordmark.svg" 
+          alt="Convoak" 
+          class="h-14 md:h-16 w-auto dark:invert transition-all duration-200"
+        >
+      </div>
+      
+      <!-- Search Component -->
+      <div class="search-component w-full flex justify-center">
+        
+        <!-- Desktop Search Bar -->
+        <div class="hidden md:block w-full max-w-[43rem]">
+          <div class="relative w-full h-13 flex items-center">
+            <div class="
+              w-full h-[52px] 
+              flex items-center 
+              rounded-full 
+              bg-white outline outline-1 outline-zinc-300
+              dark:bg-zinc-800 dark:outline-none
+              transition-colors duration-200
+              px-5
+            ">
+              <!-- Search Input -->
+              <input 
+                type="text" 
+                id="desktop-search-input"
+                placeholder="What's on your mind?"
+                class="
+                  flex-1 
+                  bg-transparent 
+                  text-base text-foreground 
+                  placeholder:text-muted-foreground 
+                  focus:outline-none
+                "
+                oninput="handleDesktopInput(this)"
+              >
+              
+              <!-- Clear Button (hidden by default, shown when typing) -->
+              <button 
+                id="desktop-clear-btn"
+                class="hidden items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors"
+                onclick="clearDesktopSearch()"
+              >
+                <i data-lucide="x" class="h-5 w-5"></i>
+              </button>
+              
+              <!-- Search Icon -->
+              <button class="flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors">
+                <i data-lucide="search" class="h-5 w-5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Mobile Search Trigger -->
+        <div class="md:hidden w-full max-w-md">
+          <button 
+            id="mobile-search-trigger"
+            onclick="openMobileSearch()"
+            class="
+              w-full h-[52px] 
+              flex items-center 
+              rounded-full 
+              bg-white outline outline-1 outline-zinc-300
+              dark:bg-zinc-800 dark:outline-none
+              transition-colors duration-200
+              px-5
+            "
+          >
+            <span class="flex-1 text-left text-base text-muted-foreground">What's on your mind?</span>
+            <i data-lucide="search" class="h-5 w-5 text-muted-foreground"></i>
+          </button>
+        </div>
+        
+        <!-- Mobile Fullscreen Modal -->
+        <div 
+          id="mobile-search-modal"
+          class="
+            fixed inset-0 z-50 
+            bg-background 
+            transform translate-x-full
+            transition-transform duration-300 ease-in-out
+            md:hidden
+          "
+        >
+          <!-- Modal Header -->
+          <div class="flex items-center h-16 px-2">
+            <!-- Back Arrow Button -->
+            <button 
+              onclick="closeMobileSearch()"
+              class="flex items-center justify-center p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-full transition-colors"
+            >
+              <i data-lucide="arrow-left" class="h-5 w-5"></i>
+            </button>
+            
+            <!-- Search Input Container -->
+            <div class="
+              flex-1 h-11
+              flex items-center 
+              rounded-full 
+              bg-transparent
+              transition-colors duration-200
+              pl-1 pr-2
+            ">
+              <input 
+                type="text" 
+                id="mobile-search-input"
+                placeholder="What's on your mind?"
+                class="
+                  w-full
+                  bg-transparent 
+                  text-base text-foreground 
+                  placeholder:text-muted-foreground 
+                  focus:outline-none
+                "
+                oninput="handleMobileInput(this)"
+              >
+            </div>
+            
+            <!-- Action Buttons Group -->
+            <div class="flex items-center">
+              <!-- Clear Button (hidden by default, shown when typing) -->
+              <button 
+                id="mobile-clear-btn"
+                class="hidden items-center justify-center p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-full transition-colors"
+                onclick="clearMobileSearch()"
+              >
+                <i data-lucide="x" class="h-5 w-5"></i>
+              </button>
+              
+              <!-- Search Button -->
+              <button 
+                onclick="submitMobileSearch()"
+                class="flex items-center justify-center p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-full transition-colors"
+              >
+                <i data-lucide="search" class="h-5 w-5"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Modal Body (for search results/suggestions) -->
+          <div class="px-4 py-2">
+            <!-- Search results or suggestions would go here -->
+          </div>
+        </div>
+        
+      </div>
+      
+    </main>
+    <!-- ========== END BODY ========== -->
+
+    <!-- ========== FOOTER ========== -->
+    <!-- Composes: copyright, links -->
+    <footer class="w-full bg-transparent shrink-0">
+      <div class="w-full flex h-16 items-center justify-center md:justify-between px-4 sm:px-6">
+        
+        <!-- === LEFT: Copyright (Desktop only) === -->
+        <div class="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Convoak</span>
+          <i data-lucide="copyright" class="h-4 w-4"></i>
+          <span>2025. All rights reserved.</span>
+        </div>
+        
+        <!-- === RIGHT: Links (centered on mobile, right on desktop) === -->
+        <div class="flex items-center justify-center md:justify-end gap-4 md:gap-6">
+          <a 
+            href="#" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Terms
+          </a>
+          <a 
+            href="#" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Privacy
+          </a>
+          <a 
+            href="#" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            About
+          </a>
+        </div>
+        
+      </div>
+    </footer>
+    <!-- ========== END FOOTER ========== -->
+    
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // ===== Theme Functions =====
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+      
+      // Reinitialize icons after theme change
+      lucide.createIcons();
+    }
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+
+    // ===== User Avatar Functions =====
+    function generateRandomGradient() {
+      const colors = [
+        '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+        '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B500', '#6C5CE7',
+        '#A29BFE', '#FD79A8', '#FDCB6E', '#6C5CE7', '#00B894',
+        '#00CEC9', '#0984E3', '#B2BEC3', '#DFE6E9', '#74B9FF'
+      ];
+      
+      const color1 = colors[Math.floor(Math.random() * colors.length)];
+      let color2 = colors[Math.floor(Math.random() * colors.length)];
+      
+      while (color2 === color1) {
+        color2 = colors[Math.floor(Math.random() * colors.length)];
+      }
+      
+      const angle = Math.floor(Math.random() * 360);
+      return `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+    }
+
+    // ===== Desktop Search Functions =====
+    function handleDesktopInput(input) {
+      const clearBtn = document.getElementById('desktop-clear-btn');
+      if (input.value.length > 0) {
+        clearBtn.classList.remove('hidden');
+        clearBtn.classList.add('flex');
+      } else {
+        clearBtn.classList.add('hidden');
+        clearBtn.classList.remove('flex');
+      }
+    }
+
+    function clearDesktopSearch() {
+      const input = document.getElementById('desktop-search-input');
+      const clearBtn = document.getElementById('desktop-clear-btn');
+      input.value = '';
+      clearBtn.classList.add('hidden');
+      clearBtn.classList.remove('flex');
+      input.focus();
+    }
+
+    // ===== Mobile Search Functions =====
+    function openMobileSearch() {
+      const modal = document.getElementById('mobile-search-modal');
+      const input = document.getElementById('mobile-search-input');
+      modal.classList.remove('translate-x-full');
+      modal.classList.add('translate-x-0');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => input.focus(), 300);
+    }
+
+    function closeMobileSearch() {
+      const modal = document.getElementById('mobile-search-modal');
+      modal.classList.remove('translate-x-0');
+      modal.classList.add('translate-x-full');
+      document.body.style.overflow = '';
+    }
+
+    function handleMobileInput(input) {
+      const clearBtn = document.getElementById('mobile-clear-btn');
+      if (input.value.length > 0) {
+        clearBtn.classList.remove('hidden');
+        clearBtn.classList.add('flex');
+      } else {
+        clearBtn.classList.add('hidden');
+        clearBtn.classList.remove('flex');
+      }
+    }
+
+    function clearMobileSearch() {
+      const input = document.getElementById('mobile-search-input');
+      const clearBtn = document.getElementById('mobile-clear-btn');
+      input.value = '';
+      clearBtn.classList.add('hidden');
+      clearBtn.classList.remove('flex');
+      input.focus();
+    }
+
+    function submitMobileSearch() {
+      const input = document.getElementById('mobile-search-input');
+      const query = input.value.trim();
+      if (query) {
+        console.log('Search submitted:', query);
+      }
+    }
+
+    // ===== Initialize =====
+    initializeTheme();
+
+    // Initialize avatars with random gradients
+    const desktopAvatar = document.getElementById('user-avatar-desktop');
+    const mobileAvatar = document.getElementById('user-avatar-mobile');
+    const gradient = generateRandomGradient();
+    
+    desktopAvatar.style.background = gradient;
+    mobileAvatar.style.background = gradient;
+
+    // Desktop sign-in toggle
+    const signinBtnDesktop = document.getElementById('signin-btn-desktop');
+    const userAvatarDesktop = document.getElementById('user-avatar-desktop');
+    
+    signinBtnDesktop.addEventListener('click', () => {
+      signinBtnDesktop.classList.add('hidden');
+      userAvatarDesktop.classList.remove('hidden');
+    });
+    
+    userAvatarDesktop.addEventListener('click', () => {
+      userAvatarDesktop.classList.add('hidden');
+      signinBtnDesktop.classList.remove('hidden');
+    });
+    
+    userAvatarDesktop.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        userAvatarDesktop.classList.add('hidden');
+        signinBtnDesktop.classList.remove('hidden');
+      }
+    });
+
+    // Mobile sign-in toggle
+    const signinBtnMobile = document.getElementById('signin-btn-mobile');
+    const userAvatarMobile = document.getElementById('user-avatar-mobile');
+    
+    signinBtnMobile.addEventListener('click', () => {
+      signinBtnMobile.classList.add('hidden');
+      userAvatarMobile.classList.remove('hidden');
+    });
+    
+    userAvatarMobile.addEventListener('click', () => {
+      userAvatarMobile.classList.add('hidden');
+      signinBtnMobile.classList.remove('hidden');
+    });
+    
+    userAvatarMobile.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        userAvatarMobile.classList.add('hidden');
+        signinBtnMobile.classList.remove('hidden');
+      }
+    });
+
+    // Theme toggle event listeners
+    document.getElementById('theme-toggle-desktop').addEventListener('click', toggleTheme);
+    document.getElementById('theme-toggle-mobile').addEventListener('click', toggleTheme);
+  </script>
+</body>
+</html>
