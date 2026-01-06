@@ -9,9 +9,9 @@
     Landing Page (Assembled)
     ========================
     This is the full landing page composed of:
-    - Header: theme-toggle, sign-in-button, user-avatar, hamburger-menu
+    - Header: theme-toggle, sign-in-button, user-avatar, menu-overlay
     - Body: wordmark, search
-    - Footer: copyright, links (Terms, Privacy, About)
+    - Footer: copyright, online-count
     
     React Implementation:
     import { LandingHeader } from '@/components/landing/header';
@@ -179,7 +179,7 @@
   <div class="h-screen flex flex-col overflow-hidden">
   
     <!-- ========== HEADER ========== -->
-    <!-- Composes: theme-toggle, sign-in-button, user-avatar, hamburger-menu -->
+    <!-- Composes: theme-toggle, sign-in-button, user-avatar, menu-overlay -->
     <header class="w-full bg-transparent shrink-0">
       <div class="w-full flex h-16 items-center justify-between px-4 sm:px-6">
 
@@ -212,11 +212,13 @@
           ></div>
         </div>
 
-        <!-- === MOBILE LEFT: Hamburger Menu + Theme Toggle === -->
+        <!-- === MOBILE LEFT: Menu Button + Theme Toggle === -->
         <div class="flex md:hidden items-center gap-2">
           <button 
+            id="menu-btn-mobile"
+            onclick="openMenu()"
             class="inline-flex items-center justify-center rounded-full p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-            aria-label="Menu"
+            aria-label="Open menu"
           >
             <i data-lucide="align-justify" class="h-6 w-6"></i>
           </button>
@@ -276,8 +278,13 @@
               bg-white outline outline-1 outline-zinc-300
               dark:bg-zinc-800 dark:outline-none
               transition-colors duration-200
-              px-5
+              px-4
             ">
+              <!-- Search Icon (Left) -->
+              <button class="flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors">
+                <i data-lucide="search" class="h-6 w-6"></i>
+              </button>
+              
               <!-- Search Input -->
               <input 
                 type="text" 
@@ -289,6 +296,7 @@
                   text-base text-foreground 
                   placeholder:text-muted-foreground 
                   focus:outline-none
+                  ml-2
                 "
                 oninput="handleDesktopInput(this)"
               >
@@ -302,9 +310,14 @@
                 <i data-lucide="x" class="h-6 w-6"></i>
               </button>
               
-              <!-- Search Icon -->
-              <button class="flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors">
-                <i data-lucide="search" class="h-6 w-6"></i>
+              <!-- Randomize Button (shown by default, hidden when typing) -->
+              <button 
+                id="desktop-randomize-btn"
+                onclick="randomizeDesktopSearch()"
+                class="flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Randomize search query"
+              >
+                <i data-lucide="party-popper" class="h-6 w-6"></i>
               </button>
             </div>
           </div>
@@ -322,11 +335,17 @@
               bg-white outline outline-1 outline-zinc-300
               dark:bg-zinc-800 dark:outline-none
               transition-colors duration-200
-              px-5
+              px-4
             "
           >
-            <span class="flex-1 text-left text-base text-muted-foreground">What's on your mind?</span>
+            <!-- Search Icon (Left) -->
             <i data-lucide="search" class="h-6 w-6 text-muted-foreground"></i>
+            
+            <!-- Placeholder Text -->
+            <span class="flex-1 text-left text-base text-muted-foreground px-3">What's on your mind?</span>
+            
+            <!-- Party Popper Icon (Right) -->
+            <i data-lucide="party-popper" class="h-6 w-6 text-muted-foreground"></i>
           </button>
         </div>
         
@@ -336,7 +355,7 @@
           class="
             fixed inset-0 z-50 
             bg-background 
-            transform translate-x-full
+            transform -translate-y-full
             transition-transform duration-300 ease-in-out
             md:hidden
           "
@@ -386,12 +405,14 @@
                 <i data-lucide="x" class="h-6 w-6"></i>
               </button>
               
-              <!-- Search Button -->
+              <!-- Randomize Button (shown by default, hidden when typing) -->
               <button 
-                onclick="submitMobileSearch()"
+                id="mobile-randomize-btn"
+                onclick="randomizeMobileSearch()"
                 class="flex items-center justify-center p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-full transition-colors"
+                aria-label="Randomize search query"
               >
-                <i data-lucide="search" class="h-6 w-6"></i>
+                <i data-lucide="party-popper" class="h-6 w-6"></i>
               </button>
             </div>
           </div>
@@ -408,48 +429,138 @@
     <!-- ========== END BODY ========== -->
 
     <!-- ========== FOOTER ========== -->
-    <!-- Composes: copyright, links -->
+    <!-- Composes: copyright, online-count -->
     <footer class="w-full bg-transparent shrink-0">
-      <div class="w-full flex h-16 items-center justify-center md:justify-between px-4 sm:px-6">
-        
-        <!-- === LEFT: Copyright (Desktop only) === -->
-        <div class="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
+      
+      <!-- === DESKTOP LAYOUT === -->
+      <div class="hidden md:flex w-full h-16 items-center justify-between px-4 sm:px-6">
+        <!-- Left: Copyright -->
+        <div class="flex items-center gap-2 text-sm text-muted-foreground">
           <span>Convoak</span>
           <i data-lucide="copyright" class="h-5 w-5"></i>
           <span>2025. All rights reserved.</span>
         </div>
         
-        <!-- === RIGHT: Links (centered on mobile, right on desktop) === -->
-        <div class="flex items-center justify-center md:justify-end gap-4 md:gap-6">
-          <a 
-            href="#" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Terms
-          </a>
-          <a 
-            href="#" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Privacy
-          </a>
-          <a 
-            href="#" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            class="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            About
-          </a>
+        <!-- Right: Online Count -->
+        <div class="flex items-center gap-2">
+          <div class="h-2 w-2 rounded-full bg-green-500"></div>
+          <span class="text-sm text-muted-foreground">1,234 online</span>
         </div>
-        
       </div>
+      
+      <!-- === MOBILE LAYOUT === -->
+      <div class="flex md:hidden w-full h-16 items-center justify-center px-4 sm:px-6">
+        <div class="flex items-center gap-3">
+          <!-- Copyright -->
+          <span class="text-sm text-muted-foreground">Convoak © 2025</span>
+          
+          <!-- Divider -->
+          <div class="h-4 w-px bg-border"></div>
+          
+          <!-- Online Count -->
+          <div class="flex items-center gap-2">
+            <div class="h-2 w-2 rounded-full bg-green-500"></div>
+            <span class="text-sm text-muted-foreground">1,234 online</span>
+          </div>
+        </div>
+      </div>
+      
     </footer>
     <!-- ========== END FOOTER ========== -->
+    
+    <!-- ========== MENU OVERLAY ========== -->
+    <div 
+      id="menu-overlay"
+      class="fixed inset-0 z-50 bg-background transform -translate-x-full transition-transform duration-300 ease-in-out"
+    >
+      <!-- Overlay Header -->
+      <div class="flex items-center justify-between h-16 px-2">
+        <!-- Wordmark -->
+        <div class="flex items-center">
+          <img 
+            src="../assets/wordmark.svg" 
+            alt="Convoak" 
+            class="h-5 w-auto dark:invert transition-all duration-200"
+          >
+        </div>
+        
+        <!-- Close Button -->
+        <button 
+          onclick="closeMenu()"
+          class="inline-flex items-center justify-center rounded-full p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Close menu"
+        >
+          <i data-lucide="x" class="h-6 w-6"></i>
+        </button>
+      </div>
+
+      <!-- Overlay Content -->
+      <div class="flex flex-col h-[calc(100vh-4rem)] px-2 py-4">
+        <!-- Navigation Links -->
+        <nav class="flex-1 space-y-1">
+          <a 
+            href="https://about.convoak.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 py-3 text-base text-foreground transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-6 w-6"></i>
+            <span>About</span>
+          </a>
+          
+          <a 
+            href="https://convoak.com/terms" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 py-3 text-base text-foreground transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-6 w-6"></i>
+            <span>Terms</span>
+          </a>
+          
+          <a 
+            href="https://convoak.com/privacy" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 py-3 text-base text-foreground transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-6 w-6"></i>
+            <span>Privacy</span>
+          </a>
+          
+          <a 
+            href="https://convoak.com/cookies" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 py-3 text-base text-foreground transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-6 w-6"></i>
+            <span>Cookies</span>
+          </a>
+          
+          <a 
+            href="https://convoak.com/accessibility" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 py-3 text-base text-foreground transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-6 w-6"></i>
+            <span>Accessibility</span>
+          </a>
+
+          <!-- Theme Toggle -->
+          <button 
+            onclick="toggleTheme()"
+            class="flex items-center gap-3 w-full py-3 text-base text-foreground transition-colors text-left"
+          >
+            <i data-lucide="sun" class="h-6 w-6 hidden dark:block"></i>
+            <i data-lucide="moon" class="h-6 w-6 dark:hidden"></i>
+            <span>Dark theme: <span id="menu-theme-status">Off</span></span>
+          </button>
+        </nav>
+      </div>
+    </div>
+    <!-- ========== END MENU OVERLAY ========== -->
     
   </div>
 
@@ -470,8 +581,17 @@
         localStorage.setItem('theme', 'dark');
       }
       
+      updateMenuThemeStatus();
       // Reinitialize icons after theme change
       lucide.createIcons();
+    }
+
+    function updateMenuThemeStatus() {
+      const themeStatus = document.getElementById('menu-theme-status');
+      const isDark = document.documentElement.classList.contains('dark');
+      if (themeStatus) {
+        themeStatus.textContent = isDark ? 'On' : 'Off';
+      }
     }
 
     function initializeTheme() {
@@ -481,7 +601,30 @@
       if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
         document.documentElement.classList.add('dark');
       }
+      updateMenuThemeStatus();
     }
+
+    // ===== Menu Overlay Functions =====
+    function openMenu() {
+      const overlay = document.getElementById('menu-overlay');
+      overlay.classList.remove('-translate-x-full');
+      overlay.classList.add('translate-x-0');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      const overlay = document.getElementById('menu-overlay');
+      overlay.classList.remove('translate-x-0');
+      overlay.classList.add('-translate-x-full');
+      document.body.style.overflow = '';
+    }
+
+    // Close menu on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeMenu();
+      }
+    });
 
     // ===== User Avatar Functions =====
     function generateRandomGradient() {
@@ -506,21 +649,47 @@
     // ===== Desktop Search Functions =====
     function handleDesktopInput(input) {
       const clearBtn = document.getElementById('desktop-clear-btn');
+      const randomizeBtn = document.getElementById('desktop-randomize-btn');
       if (input.value.length > 0) {
         clearBtn.classList.remove('hidden');
         clearBtn.classList.add('flex');
+        randomizeBtn.classList.add('hidden');
+        randomizeBtn.classList.remove('flex');
       } else {
         clearBtn.classList.add('hidden');
         clearBtn.classList.remove('flex');
+        randomizeBtn.classList.remove('hidden');
+        randomizeBtn.classList.add('flex');
       }
     }
 
     function clearDesktopSearch() {
       const input = document.getElementById('desktop-search-input');
       const clearBtn = document.getElementById('desktop-clear-btn');
+      const randomizeBtn = document.getElementById('desktop-randomize-btn');
       input.value = '';
       clearBtn.classList.add('hidden');
       clearBtn.classList.remove('flex');
+      randomizeBtn.classList.remove('hidden');
+      randomizeBtn.classList.add('flex');
+      input.focus();
+    }
+
+    function randomizeDesktopSearch() {
+      const queries = [
+        "What's the best pizza place nearby?",
+        "How do I learn to code?",
+        "Where can I watch the sunset?",
+        "What's a good book to read?",
+        "How to make sourdough bread?",
+        "Best coffee shops in town",
+        "Fun activities for the weekend",
+        "How to stay productive?"
+      ];
+      const input = document.getElementById('desktop-search-input');
+      const randomQuery = queries[Math.floor(Math.random() * queries.length)];
+      input.value = randomQuery;
+      handleDesktopInput(input);
       input.focus();
     }
 
@@ -528,45 +697,64 @@
     function openMobileSearch() {
       const modal = document.getElementById('mobile-search-modal');
       const input = document.getElementById('mobile-search-input');
-      modal.classList.remove('translate-x-full');
-      modal.classList.add('translate-x-0');
+      modal.classList.remove('-translate-y-full');
+      modal.classList.add('translate-y-0');
       document.body.style.overflow = 'hidden';
-      setTimeout(() => input.focus(), 300);
+      // Auto-focus input immediately
+      setTimeout(() => input.focus(), 50);
     }
 
     function closeMobileSearch() {
       const modal = document.getElementById('mobile-search-modal');
-      modal.classList.remove('translate-x-0');
-      modal.classList.add('translate-x-full');
+      modal.classList.remove('translate-y-0');
+      modal.classList.add('-translate-y-full');
       document.body.style.overflow = '';
     }
 
     function handleMobileInput(input) {
       const clearBtn = document.getElementById('mobile-clear-btn');
+      const randomizeBtn = document.getElementById('mobile-randomize-btn');
       if (input.value.length > 0) {
         clearBtn.classList.remove('hidden');
         clearBtn.classList.add('flex');
+        randomizeBtn.classList.add('hidden');
+        randomizeBtn.classList.remove('flex');
       } else {
         clearBtn.classList.add('hidden');
         clearBtn.classList.remove('flex');
+        randomizeBtn.classList.remove('hidden');
+        randomizeBtn.classList.add('flex');
       }
     }
 
     function clearMobileSearch() {
       const input = document.getElementById('mobile-search-input');
       const clearBtn = document.getElementById('mobile-clear-btn');
+      const randomizeBtn = document.getElementById('mobile-randomize-btn');
       input.value = '';
       clearBtn.classList.add('hidden');
       clearBtn.classList.remove('flex');
+      randomizeBtn.classList.remove('hidden');
+      randomizeBtn.classList.add('flex');
       input.focus();
     }
 
-    function submitMobileSearch() {
+    function randomizeMobileSearch() {
+      const queries = [
+        "What's the best pizza place nearby?",
+        "How do I learn to code?",
+        "Where can I watch the sunset?",
+        "What's a good book to read?",
+        "How to make sourdough bread?",
+        "Best coffee shops in town",
+        "Fun activities for the weekend",
+        "How to stay productive?"
+      ];
       const input = document.getElementById('mobile-search-input');
-      const query = input.value.trim();
-      if (query) {
-        console.log('Search submitted:', query);
-      }
+      const randomQuery = queries[Math.floor(Math.random() * queries.length)];
+      input.value = randomQuery;
+      handleMobileInput(input);
+      input.focus();
     }
 
     // ===== Initialize =====

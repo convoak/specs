@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Online Count Component</title>
+  
+  <!-- 
+    Online Count Component
+    ======================
+    Displays the number of users currently online with a green indicator.
+    
+    React Implementation:
+    interface OnlineCountProps {
+      count: number;
+    }
+    
+    export function OnlineCount({ count }: OnlineCountProps) {
+      return (
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-green-500" />
+          <span className="text-sm text-muted-foreground">
+            {count.toLocaleString()} online
+          </span>
+        </div>
+      );
+    }
+    
+    Usage:
+    <OnlineCount count={1234} />
+  -->
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    /* shadcn-zinc CSS variables for light mode */
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+    }
+
+    /* shadcn-zinc CSS variables for dark mode */
+    .dark {
+      --background: 240 6% 10%;
+      --foreground: 0 0% 98%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+    }
+
+    body {
+      font-family: 'Google Sans', system-ui, sans-serif;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex items-center justify-center p-8">
+  
+  <!-- Demo: Show both light and dark versions -->
+  <div class="flex flex-col gap-8">
+    <div>
+      <h2 class="text-lg font-semibold mb-4">Light Mode</h2>
+      <!-- ========== ONLINE COUNT COMPONENT ========== -->
+      <div class="flex items-center gap-2">
+        <div class="h-2 w-2 rounded-full bg-green-500"></div>
+        <span class="text-sm text-muted-foreground">1,234 online</span>
+      </div>
+      <!-- ========== END ONLINE COUNT COMPONENT ========== -->
+    </div>
+    
+    <button 
+      onclick="toggleTheme()" 
+      class="px-4 py-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 text-sm font-medium"
+    >
+      Toggle Theme
+    </button>
+  </div>
+  
+  <script>
+    // Theme toggle functionality
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+    
+    // Theme initialization
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    
+    initializeTheme();
+  </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Randomize Component</title>
+  
+  <!-- 
+    Randomize Component
+    ===================
+    A button with a party-popper icon that randomizes search queries.
+    
+    React Implementation:
+    interface RandomizeProps {
+      onRandomize: () => void;
+      className?: string;
+    }
+    
+    export function Randomize({ onRandomize, className }: RandomizeProps) {
+      return (
+        <button 
+          onClick={onRandomize}
+          className={cn(
+            "flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors rounded-full",
+            className
+          )}
+          aria-label="Randomize search query"
+        >
+          <PartyPopper className="h-5 w-5" />
+        </button>
+      );
+    }
+    
+    Usage:
+    <Randomize onRandomize={handleRandomize} />
+  -->
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+            accent: {
+              DEFAULT: 'hsl(var(--accent))',
+              foreground: 'hsl(var(--accent-foreground))',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <style>
+    /* shadcn-zinc CSS variables for light mode */
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+      --accent: 240 4.8% 95.9%;
+      --accent-foreground: 240 5.9% 10%;
+    }
+
+    /* shadcn-zinc CSS variables for dark mode */
+    .dark {
+      --background: 240 6% 10%;
+      --foreground: 0 0% 98%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+    }
+
+    body {
+      font-family: 'Google Sans', system-ui, sans-serif;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex items-center justify-center p-8">
+  
+  <div class="flex flex-col gap-8 items-center">
+    <h2 class="text-lg font-semibold">Randomize Button Component</h2>
+    
+    <!-- ========== RANDOMIZE COMPONENT ========== -->
+    <button 
+      onclick="handleRandomize()"
+      class="flex items-center justify-center p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full transition-colors"
+      aria-label="Randomize search query"
+    >
+      <i data-lucide="party-popper" class="h-5 w-5"></i>
+    </button>
+    <!-- ========== END RANDOMIZE COMPONENT ========== -->
+    
+    <!-- Demo output -->
+    <div id="output" class="text-sm text-muted-foreground"></div>
+    
+    <button 
+      onclick="toggleTheme()" 
+      class="px-4 py-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 text-sm font-medium"
+    >
+      Toggle Theme
+    </button>
+  </div>
+  
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Sample random queries
+    const sampleQueries = [
+      "What's the best pizza place nearby?",
+      "How do I learn to code?",
+      "Where can I watch the sunset?",
+      "What's a good book to read?",
+      "How to make sourdough bread?",
+      "Best coffee shops in town",
+      "Fun activities for the weekend",
+      "How to stay productive?"
+    ];
+    
+    function handleRandomize() {
+      const output = document.getElementById('output');
+      const randomQuery = sampleQueries[Math.floor(Math.random() * sampleQueries.length)];
+      output.textContent = `Random query: "${randomQuery}"`;
+      console.log('Randomize clicked:', randomQuery);
+    }
+    
+    // Theme toggle functionality
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+      lucide.createIcons();
+    }
+    
+    // Theme initialization
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    
+    initializeTheme();
+  </script>
+</body>
+</html>

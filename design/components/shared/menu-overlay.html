@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Menu Overlay Component</title>
+  
+  <!-- 
+    Menu Overlay Component
+    ======================
+    Full-page overlay menu that slides in from right to left.
+    
+    Features:
+    - Wordmark at the top
+    - Navigation links to external pages (Terms, Privacy, About)
+    - Dark theme toggle
+    - Slide animation from right to left when opening
+    - Slide animation from left to right when closing
+    - Move-up-right icon for external links
+    
+    React Implementation:
+    interface MenuOverlayProps {
+      isOpen: boolean;
+      onClose: () => void;
+      theme: 'light' | 'dark';
+      onThemeToggle: () => void;
+    }
+    
+    export function MenuOverlay({ isOpen, onClose, theme, onThemeToggle }: MenuOverlayProps) {
+      return (
+        <div className={cn(
+          "fixed inset-0 z-50 bg-background transform transition-transform duration-300 ease-in-out",
+          isOpen ? "translate-x-0" : "translate-x-full"
+        )}>
+          {/* Menu content */}
+        </div>
+      );
+    }
+  -->
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            zinc: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            border: 'hsl(var(--border))',
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+            accent: {
+              DEFAULT: 'hsl(var(--accent))',
+              foreground: 'hsl(var(--accent-foreground))',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+      --accent: 240 4.8% 95.9%;
+      --accent-foreground: 240 5.9% 10%;
+      --border: 240 5.9% 90%;
+    }
+
+    .dark {
+      --background: 240 6% 10%;
+      --foreground: 0 0% 98%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+      --border: 240 3.7% 15.9%;
+    }
+
+    body {
+      font-family: 'Google Sans', system-ui, sans-serif;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+  </style>
+</head>
+<body class="antialiased">
+  
+  <!-- Demo Header with Menu Button -->
+  <header class="h-16 flex items-center justify-between px-4 sm:px-6">
+    <span class="text-sm text-muted-foreground">[Header]</span>
+    <button 
+      id="menu-btn"
+      onclick="openMenu()"
+      class="flex items-center justify-center p-2.5 rounded-full text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+      aria-label="Open menu"
+    >
+      <i data-lucide="align-justify" class="h-6 w-6"></i>
+    </button>
+  </header>
+
+  <!-- ========== MENU OVERLAY COMPONENT ========== -->
+  <div 
+    id="menu-overlay"
+    class="fixed inset-0 z-50 bg-background transform -translate-x-full transition-transform duration-300 ease-in-out"
+  >
+    <!-- Overlay Header -->
+    <div class="flex items-center justify-between h-16 px-2">
+      <!-- Wordmark -->
+      <div class="flex items-center">
+        <img 
+          src="../assets/wordmark.svg" 
+          alt="Convoak" 
+          class="h-5 w-auto dark:invert transition-all duration-200"
+        >
+      </div>
+      
+      <!-- Close Button -->
+      <button 
+        onclick="closeMenu()"
+        class="inline-flex items-center justify-center rounded-full p-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+        aria-label="Close menu"
+      >
+        <i data-lucide="x" class="h-6 w-6"></i>
+      </button>
+    </div>
+
+    <!-- Overlay Content -->
+    <div class="flex flex-col h-[calc(100vh-4rem)] px-2 py-4">
+      <!-- Navigation Links -->
+      <nav class="flex-1 space-y-1">
+        <a 
+          href="https://about.convoak.com" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="flex items-center gap-3 py-3 text-base text-foreground transition-colors"
+        >
+          <i data-lucide="arrow-up-right" class="h-6 w-6"></i>
+          <span>About</span>
+        </a>
+        
+        <a 
+          href="https://convoak.com/terms" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="flex items-center gap-3 py-3 text-base text-foreground transition-colors"
+        >
+          <i data-lucide="arrow-up-right" class="h-6 w-6"></i>
+          <span>Terms</span>
+        </a>
+        
+        <a 
+          href="https://convoak.com/privacy" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="flex items-center gap-3 py-3 text-base text-foreground transition-colors"
+        >
+          <i data-lucide="arrow-up-right" class="h-6 w-6"></i>
+          <span>Privacy</span>
+        </a>
+        
+        <a 
+          href="https://convoak.com/cookies" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="flex items-center gap-3 py-3 text-base text-foreground transition-colors"
+        >
+          <i data-lucide="arrow-up-right" class="h-6 w-6"></i>
+          <span>Cookies</span>
+        </a>
+        
+        <a 
+          href="https://convoak.com/accessibility" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="flex items-center gap-3 py-3 text-base text-foreground transition-colors"
+        >
+          <i data-lucide="arrow-up-right" class="h-6 w-6"></i>
+          <span>Accessibility</span>
+        </a>
+
+        <!-- Theme Toggle -->
+        <button 
+          onclick="toggleTheme()"
+          class="flex items-center gap-3 w-full py-3 text-base text-foreground transition-colors text-left"
+        >
+          <i data-lucide="sun" class="h-6 w-6 hidden dark:block"></i>
+          <i data-lucide="moon" class="h-6 w-6 dark:hidden"></i>
+          <span>Dark theme: <span id="theme-status">Off</span></span>
+        </button>
+      </nav>
+    </div>
+  </div>
+  <!-- ========== END MENU OVERLAY COMPONENT ========== -->
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Menu functions
+    function openMenu() {
+      const overlay = document.getElementById('menu-overlay');
+      overlay.classList.remove('-translate-x-full');
+      overlay.classList.add('translate-x-0');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      const overlay = document.getElementById('menu-overlay');
+      overlay.classList.remove('translate-x-0');
+      overlay.classList.add('-translate-x-full');
+      document.body.style.overflow = '';
+    }
+
+    // Theme toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+      
+      updateThemeStatus();
+      lucide.createIcons();
+    }
+
+    // Update theme status text
+    function updateThemeStatus() {
+      const themeStatus = document.getElementById('theme-status');
+      const isDark = document.documentElement.classList.contains('dark');
+      if (themeStatus) {
+        themeStatus.textContent = isDark ? 'On' : 'Off';
+      }
+    }
+
+    // Theme initialization
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+      updateThemeStatus();
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeMenu();
+      }
+    });
+
+    initializeTheme();
+  </script>
+</body>
+</html>
