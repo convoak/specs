@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Category Component</title>
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            zinc: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            primary: {
+              DEFAULT: 'hsl(var(--primary))',
+              foreground: 'hsl(var(--primary-foreground))',
+            },
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+            accent: {
+              DEFAULT: 'hsl(var(--accent))',
+              foreground: 'hsl(var(--accent-foreground))',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --primary: 240 5.9% 10%;
+      --primary-foreground: 0 0% 98%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+      --accent: 240 4.8% 95.9%;
+      --accent-foreground: 240 5.9% 10%;
+    }
+    
+    .dark {
+      --background: 240 6% 10%;
+      --foreground: 0 0% 98%;
+      --primary: 0 0% 98%;
+      --primary-foreground: 240 5.9% 10%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+    }
+    
+    /* Hide scrollbar but allow scrolling */
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body class="antialiased bg-background min-h-screen flex items-center justify-center p-4">
+  
+  <!-- 
+    Search Category Component
+    =========================
+    Horizontal scrollable pill tabs for filtering search results by category.
+    
+    Features:
+    - Three categories: Live, History, Trending
+    - Fully rounded pills (rounded-full)
+    - Active state: bg-primary text-primary-foreground
+    - Inactive state: bg-muted text-muted-foreground with hover effect
+    - Horizontal scroll with hidden scrollbar for future category additions
+    - Responsive and touch-friendly
+    
+    React Implementation:
+    type SearchCategory = 'live' | 'history' | 'trending';
+    
+    interface SearchCategoryProps {
+      activeCategory: SearchCategory;
+      onCategoryChange: (category: SearchCategory) => void;
+    }
+    
+    export function SearchCategory({ activeCategory, onCategoryChange }: SearchCategoryProps) {
+      const categories: { id: SearchCategory; label: string }[] = [
+        { id: 'live', label: 'Live' },
+        { id: 'history', label: 'History' },
+        { id: 'trending', label: 'Trending' },
+      ];
+      
+      return (
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide py-1">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => onCategoryChange(category.id)}
+              className={cn(
+                "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors",
+                activeCategory === category.id
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              )}
+            >
+              {category.label}
+            </button>
+          ))}
+        </div>
+      );
+    }
+    
+    Usage:
+    <SearchCategory 
+      activeCategory={activeCategory} 
+      onCategoryChange={setActiveCategory} 
+    />
+  -->
+  
+  <!-- ========== SEARCH CATEGORY COMPONENT ========== -->
+  <div class="search-category w-full max-w-[43rem]">
+    <div class="flex gap-2 overflow-x-auto scrollbar-hide py-1">
+      <!-- Live Category (Active by default) -->
+      <button 
+        id="category-live"
+        onclick="setActiveCategory('live')"
+        class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-primary text-primary-foreground"
+      >
+        Live
+      </button>
+      
+      <!-- History Category -->
+      <button 
+        id="category-history"
+        onclick="setActiveCategory('history')"
+        class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+      >
+        History
+      </button>
+      
+      <!-- Trending Category -->
+      <button 
+        id="category-trending"
+        onclick="setActiveCategory('trending')"
+        class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+      >
+        Trending
+      </button>
+      
+      <!-- Recommended Category -->
+      <button 
+        id="category-recommended"
+        onclick="setActiveCategory('recommended')"
+        class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+      >
+        Recommended
+      </button>
+    </div>
+  </div>
+  <!-- ========== END SEARCH CATEGORY COMPONENT ========== -->
+  
+  
+  <!-- Demo: Theme Toggle for Testing -->
+  <button 
+    onclick="toggleTheme()" 
+    class="fixed bottom-4 right-4 px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium"
+  >
+    Toggle Theme
+  </button>
+  
+  <script>
+    // Active category state
+    let activeCategory = 'live';
+    
+    function setActiveCategory(category) {
+      activeCategory = category;
+      
+      // Get all category buttons
+      const categories = ['live', 'history', 'trending', 'recommended'];
+      
+      categories.forEach(cat => {
+        const btn = document.getElementById(`category-${cat}`);
+        if (cat === category) {
+          // Active state
+          btn.classList.remove('bg-zinc-100', 'dark:bg-zinc-700', 'text-muted-foreground', 'hover:bg-zinc-200', 'dark:hover:bg-zinc-600', 'hover:text-accent-foreground');
+          btn.classList.add('bg-primary', 'text-primary-foreground');
+        } else {
+          // Inactive state
+          btn.classList.remove('bg-primary', 'text-primary-foreground');
+          btn.classList.add('bg-zinc-100', 'dark:bg-zinc-700', 'text-muted-foreground', 'hover:bg-zinc-200', 'dark:hover:bg-zinc-600', 'hover:text-accent-foreground');
+        }
+      });
+      
+      // Log for demo purposes
+      console.log('Active category:', category);
+    }
+    
+    // Theme initialization
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+    
+    initializeTheme();
+  </script>
+</body>
+</html>

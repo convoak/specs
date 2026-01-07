@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Search Expanded Component</title>
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            zinc: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            primary: {
+              DEFAULT: 'hsl(var(--primary))',
+              foreground: 'hsl(var(--primary-foreground))',
+            },
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+            accent: {
+              DEFAULT: 'hsl(var(--accent))',
+              foreground: 'hsl(var(--accent-foreground))',
+            },
+            border: 'hsl(var(--border))',
+          },
+        },
+      },
+    }
+  </script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <style>
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --primary: 240 5.9% 10%;
+      --primary-foreground: 0 0% 98%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+      --accent: 240 4.8% 95.9%;
+      --accent-foreground: 240 5.9% 10%;
+      --border: 240 5.9% 90%;
+    }
+    
+    .dark {
+      --background: 240 6% 10%;
+      --foreground: 0 0% 98%;
+      --primary: 0 0% 98%;
+      --primary-foreground: 240 5.9% 10%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+      --border: 240 3.7% 15.9%;
+    }
+    
+    /* Hide scrollbar but allow scrolling */
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Custom scrollbar styling */
+    .custom-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: hsl(240 5% 75%) transparent;
+    }
+    .dark .custom-scrollbar {
+      scrollbar-color: hsl(240 4% 40%) transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: hsl(240 5% 75%);
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background-color: hsl(240 5% 65%);
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: hsl(240 4% 40%);
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background-color: hsl(240 4% 50%);
+    }
+  </style>
+</head>
+<body class="antialiased bg-background min-h-screen flex items-center justify-center p-4">
+  
+  <!-- 
+    Search Expanded Component (Google-style)
+    ========================================
+    A unified search component where the search bar morphs into an expanded panel on focus.
+    Like Google's search, the search input becomes part of the dropdown container.
+    
+    Features:
+    - Container with rounded-xl border radius (all corners)
+    - Search input at the top of the expanded panel
+    - Category pills below the search input
+    - Results list below the categories
+    - Shadow and border for depth
+    - Smooth transition when expanding
+    
+    Desktop Behavior:
+    - On focus: Search bar transforms into expanded panel
+    - Search input becomes the top section of the rounded container
+    - Categories and results appear below
+    - Click outside to collapse back to simple search bar
+    
+    Mobile Behavior:
+    - Fullscreen overlay (unchanged)
+    - Search input in header
+    - Categories and results below
+    
+    React Implementation:
+    interface SearchExpandedProps {
+      isExpanded: boolean;
+      searchQuery: string;
+      onQueryChange: (query: string) => void;
+      onResultClick: (query: string) => void;
+      onExpandedChange: (expanded: boolean) => void;
+    }
+    
+    export function SearchExpanded({ isExpanded, searchQuery, onQueryChange, onResultClick, onExpandedChange }: SearchExpandedProps) {
+      const [activeCategory, setActiveCategory] = useState<'live' | 'history' | 'trending'>('live');
+      
+      return (
+        <div className={cn(
+          "w-full max-w-[43rem] rounded-xl bg-white dark:bg-zinc-800 transition-all",
+          isExpanded 
+            ? "shadow-lg border border-zinc-200 dark:border-zinc-700" 
+            : "outline outline-1 outline-zinc-300 dark:outline-none"
+        )}>
+          {/* Search Input Section */}
+          <div className="flex items-center h-[52px] px-4">
+            <SearchIcon />
+            <input 
+              value={searchQuery}
+              onChange={(e) => onQueryChange(e.target.value)}
+              onFocus={() => onExpandedChange(true)}
+              placeholder="What's on your mind?"
+            />
+            <ClearOrRandomizeButton />
+          </div>
+          
+          {/* Expanded Content */}
+          {isExpanded && (
+            <>
+              <SearchCategory activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+              <SearchResults results={results[activeCategory]} onResultClick={onResultClick} />
+            </>
+          )}
+        </div>
+      );
+    }
+  -->
+  
+  <!-- ========== SEARCH EXPANDED COMPONENT (GOOGLE-STYLE) ========== -->
+  <div class="search-expanded w-full max-w-[43rem]">
+    
+    <!-- Unified Search Container -->
+    <div id="search-container" class="
+      rounded-3xl 
+      bg-white dark:bg-zinc-800
+      border border-zinc-200 dark:border-zinc-700
+      shadow-lg
+      overflow-hidden
+    ">
+      
+      <!-- Search Input Section (Top of expanded panel) -->
+      <div class="flex items-center h-[52px] px-4">
+        <!-- Search Icon (Left) -->
+        <button class="flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors">
+          <i data-lucide="search" class="h-5 w-5"></i>
+        </button>
+        
+        <!-- Search Input -->
+        <input 
+          type="text" 
+          id="search-input"
+          placeholder="What's on your mind?"
+          class="
+            flex-1 
+            bg-transparent 
+            text-base text-foreground 
+            placeholder:text-muted-foreground 
+            focus:outline-none
+            ml-2
+          "
+          oninput="handleInput(this)"
+        >
+        
+        <!-- Clear Button (hidden by default, shown when typing) -->
+        <button 
+          id="clear-btn"
+          class="hidden items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors"
+          onclick="clearSearch()"
+        >
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+        
+        <!-- Randomize Button (shown by default, hidden when typing) -->
+        <button 
+          id="randomize-btn"
+          onclick="randomizeSearch()"
+          class="flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Randomize search query"
+        >
+          <i data-lucide="party-popper" class="h-5 w-5"></i>
+        </button>
+      </div>
+      
+      <!-- Divider -->
+      <div class="h-px bg-zinc-200 dark:bg-zinc-700 mx-4"></div>
+      
+      <!-- Scrollable Content Area (Categories + Results) -->
+      <div class="max-h-[35vh] lg:max-h-[40vh] xl:max-h-[50vh] overflow-y-auto custom-scrollbar">
+        <!-- Category Pills Section (Sticky) -->
+        <div class="sticky top-0 bg-white dark:bg-zinc-800 z-10 pt-4 pb-2 px-4">
+          <div class="flex gap-2 overflow-x-auto scrollbar-hide">
+            <!-- Live Category (Active by default) -->
+            <button 
+              id="category-live"
+              onclick="setActiveCategory('live')"
+              class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-primary text-primary-foreground"
+            >
+              Live
+            </button>
+            
+            <!-- History Category -->
+            <button 
+              id="category-history"
+              onclick="setActiveCategory('history')"
+              class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+            >
+              History
+            </button>
+            
+            <!-- Trending Category -->
+            <button 
+              id="category-trending"
+              onclick="setActiveCategory('trending')"
+              class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+            >
+              Trending
+            </button>
+            
+            <!-- Recommended Category -->
+            <button 
+              id="category-recommended"
+              onclick="setActiveCategory('recommended')"
+              class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+            >
+              Recommended
+            </button>
+          </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="px-4 pb-4">
+        
+        <!-- Live Results (shown by default) -->
+        <div id="results-live" class="flex flex-col">
+          <button 
+            onclick="handleResultClick('lakers vs celtics')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">lakers vs celtics</span>
+          </button>
+          <button 
+            onclick="handleResultClick('hawaii snow storm')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">hawaii snow storm</span>
+          </button>
+          <button 
+            onclick="handleResultClick('social security payments')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">social security payments</span>
+          </button>
+          <button 
+            onclick="handleResultClick('chatgpt crashing')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">chatgpt crashing</span>
+          </button>
+          <button 
+            onclick="handleResultClick('cloudflare server down')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">cloudflare server down</span>
+          </button>
+        </div>
+        
+        <!-- History Results (hidden by default) -->
+        <div id="results-history" class="hidden flex-col">
+          <button 
+            onclick="handleResultClick('best pizza near me')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">best pizza near me</span>
+          </button>
+          <button 
+            onclick="handleResultClick('javascript tutorial')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">javascript tutorial</span>
+          </button>
+          <button 
+            onclick="handleResultClick('weather forecast')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">weather forecast</span>
+          </button>
+        </div>
+        
+        <!-- Trending Results (hidden by default) -->
+        <div id="results-trending" class="hidden flex-col">
+          <button 
+            onclick="handleResultClick('super bowl 2026')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">super bowl 2026</span>
+          </button>
+          <button 
+            onclick="handleResultClick('new year resolutions')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">new year resolutions</span>
+          </button>
+          <button 
+            onclick="handleResultClick('ai news today')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">ai news today</span>
+          </button>
+          <button 
+            onclick="handleResultClick('bitcoin price')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">bitcoin price</span>
+          </button>
+          <button 
+            onclick="handleResultClick('stock market updates')"
+            class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+            <span class="text-base truncate">stock market updates</span>
+          </button>
+        </div>
+        
+        <!-- Recommended Results (Empty State) -->
+        <div id="results-recommended" class="hidden flex-col items-center justify-center py-8">
+          <img 
+            src="../../assets/empty-state.svg" 
+            alt="Empty state illustration"
+            class="h-24 w-24 dark:invert opacity-50"
+          >
+          <p class="mt-4 text-sm text-muted-foreground">Nothing to show</p>
+        </div>
+        
+        <!-- Empty State (for search with no results) -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-8">
+          <img 
+            src="../../assets/empty-state.svg" 
+            alt="Empty state illustration"
+            class="h-24 w-24 dark:invert opacity-50"
+          >
+          <p class="mt-4 text-sm text-muted-foreground">Nothing to show</p>
+        </div>
+        
+        </div>
+      </div>
+      
+    </div>
+    
+  </div>
+  <!-- ========== END SEARCH EXPANDED COMPONENT ========== -->
+  
+  
+  <!-- Demo Controls -->
+  <div class="fixed bottom-4 right-4 flex gap-2">
+    <button 
+      onclick="showEmptyState()" 
+      class="px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium"
+    >
+      Show Empty
+    </button>
+    <button 
+      onclick="toggleTheme()" 
+      class="px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium"
+    >
+      Toggle Theme
+    </button>
+  </div>
+  
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Active category state
+    let activeCategory = 'live';
+    
+    function handleInput(input) {
+      const clearBtn = document.getElementById('clear-btn');
+      const randomizeBtn = document.getElementById('randomize-btn');
+      if (input.value.length > 0) {
+        clearBtn.classList.remove('hidden');
+        clearBtn.classList.add('flex');
+        randomizeBtn.classList.add('hidden');
+        randomizeBtn.classList.remove('flex');
+      } else {
+        clearBtn.classList.add('hidden');
+        clearBtn.classList.remove('flex');
+        randomizeBtn.classList.remove('hidden');
+        randomizeBtn.classList.add('flex');
+      }
+    }
+    
+    function clearSearch() {
+      const input = document.getElementById('search-input');
+      const clearBtn = document.getElementById('clear-btn');
+      const randomizeBtn = document.getElementById('randomize-btn');
+      input.value = '';
+      clearBtn.classList.add('hidden');
+      clearBtn.classList.remove('flex');
+      randomizeBtn.classList.remove('hidden');
+      randomizeBtn.classList.add('flex');
+      input.focus();
+    }
+    
+    function randomizeSearch() {
+      const queries = [
+        "What's the best pizza place nearby?",
+        "How do I learn to code?",
+        "Where can I watch the sunset?",
+        "What's a good book to read?",
+        "How to make sourdough bread?",
+        "Best coffee shops in town",
+        "Fun activities for the weekend",
+        "How to stay productive?"
+      ];
+      const input = document.getElementById('search-input');
+      const randomQuery = queries[Math.floor(Math.random() * queries.length)];
+      input.value = randomQuery;
+      handleInput(input);
+      input.focus();
+    }
+    
+    function setActiveCategory(category) {
+      activeCategory = category;
+      
+      // Update category button styles
+      const categories = ['live', 'history', 'trending'];
+      categories.forEach(cat => {
+        const btn = document.getElementById(`category-${cat}`);
+        if (cat === category) {
+          btn.classList.remove('bg-zinc-100', 'dark:bg-zinc-700', 'text-muted-foreground', 'hover:bg-zinc-200', 'dark:hover:bg-zinc-600', 'hover:text-accent-foreground');
+          btn.classList.add('bg-primary', 'text-primary-foreground');
+        } else {
+          btn.classList.remove('bg-primary', 'text-primary-foreground');
+          btn.classList.add('bg-zinc-100', 'dark:bg-zinc-700', 'text-muted-foreground', 'hover:bg-zinc-200', 'dark:hover:bg-zinc-600', 'hover:text-accent-foreground');
+        }
+      });
+      
+      // Show/hide results sections
+      const emptyState = document.getElementById('empty-state');
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+      
+      categories.forEach(cat => {
+        const results = document.getElementById(`results-${cat}`);
+        if (cat === category) {
+          results.classList.remove('hidden');
+          results.classList.add('flex');
+        } else {
+          results.classList.add('hidden');
+          results.classList.remove('flex');
+        }
+      });
+    }
+    
+    function handleResultClick(query) {
+      const input = document.getElementById('search-input');
+      input.value = query;
+      handleInput(input);
+      console.log('Selected query:', query);
+    }
+    
+    function showEmptyState() {
+      // Hide all results
+      const categories = ['live', 'history', 'trending'];
+      categories.forEach(cat => {
+        const results = document.getElementById(`results-${cat}`);
+        results.classList.add('hidden');
+        results.classList.remove('flex');
+      });
+      
+      // Show empty state
+      const emptyState = document.getElementById('empty-state');
+      emptyState.classList.remove('hidden');
+      emptyState.classList.add('flex');
+    }
+    
+    // Theme initialization
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+      lucide.createIcons();
+    }
+    
+    initializeTheme();
+  </script>
+</body>
+</html>

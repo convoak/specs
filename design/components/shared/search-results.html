@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Results Component</title>
+  
+  <!-- Google Sans Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Google Sans', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            zinc: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+            muted: {
+              DEFAULT: 'hsl(var(--muted))',
+              foreground: 'hsl(var(--muted-foreground))',
+            },
+            accent: {
+              DEFAULT: 'hsl(var(--accent))',
+              foreground: 'hsl(var(--accent-foreground))',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <style>
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --muted: 240 4.8% 95.9%;
+      --muted-foreground: 240 3.8% 46.1%;
+      --accent: 240 4.8% 95.9%;
+      --accent-foreground: 240 5.9% 10%;
+    }
+    
+    .dark {
+      --background: 240 6% 10%;
+      --foreground: 0 0% 98%;
+      --muted: 240 3.7% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --accent: 240 3.7% 15.9%;
+      --accent-foreground: 0 0% 98%;
+    }
+  </style>
+</head>
+<body class="antialiased bg-background min-h-screen flex items-center justify-center p-4">
+  
+  <!-- 
+    Search Results Component
+    ========================
+    A vertical list of search result items with arrow-up-right icon and query text.
+    
+    Features:
+    - Each row has Lucide arrow-up-right icon on the left
+    - Query text to the right of the icon
+    - Hover state with background highlight
+    - Click to populate search input with query
+    - Shows empty-state component when no results
+    
+    React Implementation:
+    interface SearchResult {
+      id: string;
+      query: string;
+    }
+    
+    interface SearchResultsProps {
+      results: SearchResult[];
+      onResultClick: (query: string) => void;
+    }
+    
+    export function SearchResults({ results, onResultClick }: SearchResultsProps) {
+      if (results.length === 0) {
+        return <EmptyState message="Nothing to show" />;
+      }
+      
+      return (
+        <div className="flex flex-col">
+          {results.map((result) => (
+            <button
+              key={result.id}
+              onClick={() => onResultClick(result.query)}
+              className="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-accent rounded-lg transition-colors"
+            >
+              <ArrowUpRight className="h-5 w-5 text-muted-foreground shrink-0" />
+              <span className="text-base truncate">{result.query}</span>
+            </button>
+          ))}
+        </div>
+      );
+    }
+    
+    Usage:
+    <SearchResults 
+      results={searchResults} 
+      onResultClick={(query) => setSearchInput(query)} 
+    />
+  -->
+  
+  <!-- ========== SEARCH RESULTS COMPONENT ========== -->
+  <div class="search-results w-full max-w-[43rem]">
+    
+    <!-- Results List -->
+    <div id="results-list" class="flex flex-col">
+      <!-- Result Item 1 -->
+      <button 
+        onclick="handleResultClick('lakers vs celtics')"
+        class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+      >
+        <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+        <span class="text-base truncate">lakers vs celtics</span>
+      </button>
+      
+      <!-- Result Item 2 -->
+      <button 
+        onclick="handleResultClick('hawaii snow storm')"
+        class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+      >
+        <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+        <span class="text-base truncate">hawaii snow storm</span>
+      </button>
+      
+      <!-- Result Item 3 -->
+      <button 
+        onclick="handleResultClick('social security payments')"
+        class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+      >
+        <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+        <span class="text-base truncate">social security payments</span>
+      </button>
+      
+      <!-- Result Item 4 -->
+      <button 
+        onclick="handleResultClick('chatgpt crashing')"
+        class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+      >
+        <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+        <span class="text-base truncate">chatgpt crashing</span>
+      </button>
+      
+      <!-- Result Item 5 -->
+      <button 
+        onclick="handleResultClick('cloudflare server down')"
+        class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+      >
+        <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+        <span class="text-base truncate">cloudflare server down</span>
+      </button>
+    </div>
+    
+    <!-- Empty State (hidden by default, shown when no results) -->
+    <div id="empty-state" class="hidden flex-col items-center justify-center py-8">
+      <img 
+        src="../../assets/empty-state.svg" 
+        alt="Empty state illustration"
+        class="h-24 w-24 dark:invert opacity-50"
+      >
+      <p class="mt-4 text-sm text-muted-foreground">Nothing to show</p>
+    </div>
+    
+  </div>
+  <!-- ========== END SEARCH RESULTS COMPONENT ========== -->
+  
+  
+  <!-- Demo Controls -->
+  <div class="fixed bottom-4 right-4 flex gap-2">
+    <button 
+      onclick="toggleEmptyState()" 
+      class="px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium"
+    >
+      Toggle Empty
+    </button>
+    <button 
+      onclick="toggleTheme()" 
+      class="px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium"
+    >
+      Toggle Theme
+    </button>
+  </div>
+  
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Handle result click
+    function handleResultClick(query) {
+      console.log('Selected query:', query);
+      // In React, this would call onResultClick(query) to populate the search input
+      alert(`Query selected: ${query}`);
+    }
+    
+    // Toggle empty state for demo
+    let showingEmpty = false;
+    function toggleEmptyState() {
+      showingEmpty = !showingEmpty;
+      const resultsList = document.getElementById('results-list');
+      const emptyState = document.getElementById('empty-state');
+      
+      if (showingEmpty) {
+        resultsList.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+      } else {
+        resultsList.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+    }
+    
+    // Theme initialization
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      
+      if (isDark) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+      lucide.createIcons();
+    }
+    
+    initializeTheme();
+  </script>
+</body>
+</html>

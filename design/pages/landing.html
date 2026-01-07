@@ -172,11 +172,49 @@
         font-size: 16px;
       }
     }
+    
+    /* Hide scrollbar but allow scrolling */
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Custom scrollbar styling */
+    .custom-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: hsl(240 5% 75%) transparent;
+    }
+    .dark .custom-scrollbar {
+      scrollbar-color: hsl(240 4% 40%) transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: hsl(240 5% 75%);
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background-color: hsl(240 5% 65%);
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: hsl(240 4% 40%);
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background-color: hsl(240 4% 50%);
+    }
   </style>
 </head>
 <body class="antialiased">
   <!-- Full page layout wrapper (no scroll) -->
-  <div class="h-screen flex flex-col overflow-hidden">
+  <div id="page-wrapper" class="h-screen flex flex-col overflow-hidden">
   
     <!-- ========== HEADER ========== -->
     <!-- Composes: theme-toggle, sign-in-button, user-avatar, menu-overlay -->
@@ -254,10 +292,10 @@
 
     <!-- ========== BODY ========== -->
     <!-- Composes: wordmark, search -->
-    <main class="flex-1 flex flex-col items-center pt-[12vh] md:pt-[20vh] px-4 sm:px-6 overflow-hidden">
+    <main class="flex-1 flex flex-col items-center pt-[8vh] lg:pt-[10vh] xl:pt-[12vh] px-4 sm:px-6 overflow-hidden">
       
       <!-- Wordmark Component -->
-      <div class="wordmark mb-10">
+      <div class="wordmark mb-6 lg:mb-8">
         <img 
           src="../assets/wordmark.svg" 
           alt="Convoak" 
@@ -268,9 +306,13 @@
       <!-- Search Component -->
       <div class="search-component w-full flex justify-center">
         
-        <!-- Desktop Search Bar -->
+        <!-- Desktop Search (Google-style unified component) -->
         <div class="hidden md:block w-full max-w-[43rem]">
-          <div class="relative w-full h-13 flex items-center">
+          <!-- Collapsed State (default) -->
+          <div 
+            id="desktop-search-collapsed"
+            class="relative w-full"
+          >
             <div class="
               w-full h-[52px] 
               flex items-center 
@@ -279,7 +321,44 @@
               dark:bg-zinc-800 dark:outline-none
               transition-colors duration-200
               px-4
-            ">
+              cursor-text
+            "
+            onclick="expandDesktopSearch()"
+            >
+              <!-- Search Icon (Left) -->
+              <button class="flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors">
+                <i data-lucide="search" class="h-6 w-6"></i>
+              </button>
+              
+              <!-- Placeholder Text -->
+              <span class="flex-1 text-base text-muted-foreground ml-2">What's on your mind?</span>
+              
+              <!-- Randomize Button -->
+              <button 
+                onclick="event.stopPropagation(); randomizeDesktopSearch()"
+                class="flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Randomize search query"
+              >
+                <i data-lucide="party-popper" class="h-6 w-6"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Expanded State (Google-style) -->
+          <div 
+            id="desktop-search-expanded"
+            class="
+              hidden
+              w-full
+              rounded-3xl 
+              bg-white dark:bg-zinc-800
+              border border-zinc-200 dark:border-zinc-700
+              shadow-lg
+              overflow-hidden
+            "
+          >
+            <!-- Search Input Section -->
+            <div class="flex items-center h-[52px] px-4">
               <!-- Search Icon (Left) -->
               <button class="flex items-center justify-center p-2 text-muted-foreground hover:text-foreground transition-colors">
                 <i data-lucide="search" class="h-6 w-6"></i>
@@ -319,6 +398,149 @@
               >
                 <i data-lucide="party-popper" class="h-6 w-6"></i>
               </button>
+            </div>
+            
+            <!-- Divider -->
+            <div class="h-px bg-zinc-200 dark:bg-zinc-700 mx-4"></div>
+            
+            <!-- Scrollable Content Area (Categories + Results) -->
+            <div class="max-h-[35vh] lg:max-h-[40vh] xl:max-h-[50vh] overflow-y-auto custom-scrollbar">
+              <!-- Category Pills Section (Sticky) -->
+              <div class="sticky top-0 bg-white dark:bg-zinc-800 z-10 pt-4 pb-2 px-4">
+                <div class="flex gap-2 overflow-x-auto scrollbar-hide">
+                  <button 
+                    id="desktop-category-live"
+                    onclick="setDesktopCategory('live')"
+                    class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-primary text-primary-foreground"
+                  >
+                    Live
+                  </button>
+                  <button 
+                    id="desktop-category-history"
+                    onclick="setDesktopCategory('history')"
+                    class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+                  >
+                    History
+                  </button>
+                  <button 
+                    id="desktop-category-trending"
+                    onclick="setDesktopCategory('trending')"
+                    class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+                  >
+                    Trending
+                  </button>
+                  <button 
+                    id="desktop-category-recommended"
+                    onclick="setDesktopCategory('recommended')"
+                    class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+                  >
+                    Recommended
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Results Section -->
+              <div class="px-4 pb-4">
+              <!-- Live Results -->
+              <div id="desktop-results-live" class="flex flex-col">
+                <button onclick="selectDesktopResult('lakers vs celtics')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">lakers vs celtics</span>
+                </button>
+                <button onclick="selectDesktopResult('hawaii snow storm')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">hawaii snow storm</span>
+                </button>
+                <button onclick="selectDesktopResult('social security payments')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">social security payments</span>
+                </button>
+                <button onclick="selectDesktopResult('chatgpt crashing')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">chatgpt crashing</span>
+                </button>
+                <button onclick="selectDesktopResult('cloudflare server down')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">cloudflare server down</span>
+                </button>
+                <button onclick="selectDesktopResult('taylor swift eras tour')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">taylor swift eras tour</span>
+                </button>
+                <button onclick="selectDesktopResult('amazon prime day deals')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">amazon prime day deals</span>
+                </button>
+                <button onclick="selectDesktopResult('nfl playoff schedule')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">nfl playoff schedule</span>
+                </button>
+                <button onclick="selectDesktopResult('apple vision pro review')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">apple vision pro review</span>
+                </button>
+                <button onclick="selectDesktopResult('wordle today answer')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">wordle today answer</span>
+                </button>
+                <button onclick="selectDesktopResult('earthquake california')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">earthquake california</span>
+                </button>
+                <button onclick="selectDesktopResult('spacex launch live')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">spacex launch live</span>
+                </button>
+              </div>
+              
+              <!-- History Results -->
+              <div id="desktop-results-history" class="hidden flex-col">
+                <button onclick="selectDesktopResult('best pizza near me')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">best pizza near me</span>
+                </button>
+                <button onclick="selectDesktopResult('javascript tutorial')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">javascript tutorial</span>
+                </button>
+                <button onclick="selectDesktopResult('weather forecast')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">weather forecast</span>
+                </button>
+              </div>
+              
+              <!-- Trending Results -->
+              <div id="desktop-results-trending" class="hidden flex-col">
+                <button onclick="selectDesktopResult('super bowl 2026')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">super bowl 2026</span>
+                </button>
+                <button onclick="selectDesktopResult('new year resolutions')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">new year resolutions</span>
+                </button>
+                <button onclick="selectDesktopResult('ai news today')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">ai news today</span>
+                </button>
+                <button onclick="selectDesktopResult('bitcoin price')" class="flex items-center gap-3 px-2 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-5 w-5 text-muted-foreground shrink-0"></i>
+                  <span class="text-base truncate">bitcoin price</span>
+                </button>
+              </div>
+              
+              <!-- Recommended Results (Empty State) -->
+              <div id="desktop-results-recommended" class="hidden flex-col items-center justify-center py-8">
+                <img src="../assets/empty-state.svg" alt="Empty state" class="h-24 w-24 dark:invert opacity-50">
+                <p class="mt-4 text-sm text-muted-foreground">Nothing to show</p>
+              </div>
+              
+              <!-- Empty State (for search with no results) -->
+              <div id="desktop-empty-state" class="hidden flex-col items-center justify-center py-8">
+                <img src="../assets/empty-state.svg" alt="Empty state" class="h-24 w-24 dark:invert opacity-50">
+                <p class="mt-4 text-sm text-muted-foreground">Nothing to show</p>
+              </div>
+              </div>
             </div>
           </div>
         </div>
@@ -417,9 +639,144 @@
             </div>
           </div>
           
-          <!-- Modal Body (for search results/suggestions) -->
+          <!-- Modal Body (Search Expanded Panel) -->
           <div class="px-4 py-2">
-            <!-- Search results or suggestions would go here -->
+            <!-- Category Pills Section (Sticky) -->
+            <div class="sticky top-0 bg-background z-10 pb-2">
+              <div class="flex gap-2 overflow-x-auto scrollbar-hide">
+                <button 
+                  id="mobile-category-live"
+                  onclick="setMobileCategory('live')"
+                  class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-primary text-primary-foreground"
+                >
+                  Live
+                </button>
+                <button 
+                  id="mobile-category-history"
+                  onclick="setMobileCategory('history')"
+                  class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+                >
+                  History
+                </button>
+                <button 
+                  id="mobile-category-trending"
+                  onclick="setMobileCategory('trending')"
+                  class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+                >
+                  Trending
+                </button>
+                <button 
+                  id="mobile-category-recommended"
+                  onclick="setMobileCategory('recommended')"
+                  class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors bg-zinc-100 dark:bg-zinc-700 text-muted-foreground hover:bg-zinc-200 dark:hover:bg-zinc-600 hover:text-accent-foreground"
+                >
+                  Recommended
+                </button>
+              </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="max-h-[calc(100vh-140px)] overflow-y-auto">
+              <!-- Live Results -->
+              <div id="mobile-results-live" class="flex flex-col">
+                <button onclick="selectMobileResult('lakers vs celtics')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">lakers vs celtics</span>
+                </button>
+                <button onclick="selectMobileResult('hawaii snow storm')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">hawaii snow storm</span>
+                </button>
+                <button onclick="selectMobileResult('social security payments')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">social security payments</span>
+                </button>
+                <button onclick="selectMobileResult('chatgpt crashing')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">chatgpt crashing</span>
+                </button>
+                <button onclick="selectMobileResult('cloudflare server down')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">cloudflare server down</span>
+                </button>
+                <button onclick="selectMobileResult('taylor swift eras tour')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">taylor swift eras tour</span>
+                </button>
+                <button onclick="selectMobileResult('amazon prime day deals')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">amazon prime day deals</span>
+                </button>
+                <button onclick="selectMobileResult('nfl playoff schedule')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">nfl playoff schedule</span>
+                </button>
+                <button onclick="selectMobileResult('apple vision pro review')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">apple vision pro review</span>
+                </button>
+                <button onclick="selectMobileResult('wordle today answer')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">wordle today answer</span>
+                </button>
+                <button onclick="selectMobileResult('earthquake california')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">earthquake california</span>
+                </button>
+                <button onclick="selectMobileResult('spacex launch live')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">spacex launch live</span>
+                </button>
+              </div>
+              
+              <!-- History Results -->
+              <div id="mobile-results-history" class="hidden flex-col">
+                <button onclick="selectMobileResult('best pizza near me')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">best pizza near me</span>
+                </button>
+                <button onclick="selectMobileResult('javascript tutorial')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">javascript tutorial</span>
+                </button>
+                <button onclick="selectMobileResult('weather forecast')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">weather forecast</span>
+                </button>
+              </div>
+              
+              <!-- Trending Results -->
+              <div id="mobile-results-trending" class="hidden flex-col">
+                <button onclick="selectMobileResult('super bowl 2026')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">super bowl 2026</span>
+                </button>
+                <button onclick="selectMobileResult('new year resolutions')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">new year resolutions</span>
+                </button>
+                <button onclick="selectMobileResult('ai news today')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">ai news today</span>
+                </button>
+                <button onclick="selectMobileResult('bitcoin price')" class="flex items-center gap-3 py-3 text-left text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors">
+                  <i data-lucide="arrow-up-right" class="h-6 w-6 text-muted-foreground shrink-0 ml-0.5"></i>
+                  <span class="text-base truncate">bitcoin price</span>
+                </button>
+              </div>
+              
+              <!-- Recommended Results (Empty State) -->
+              <div id="mobile-results-recommended" class="hidden flex-col items-center justify-center py-8">
+                <img src="../assets/empty-state.svg" alt="Empty state" class="h-24 w-24 dark:invert opacity-50">
+                <p class="mt-4 text-sm text-muted-foreground">Nothing to show</p>
+              </div>
+              
+              <!-- Empty State (for search with no results) -->
+              <div id="mobile-empty-state" class="hidden flex-col items-center justify-center py-8">
+                <img src="../assets/empty-state.svg" alt="Empty state" class="h-24 w-24 dark:invert opacity-50">
+                <p class="mt-4 text-sm text-muted-foreground">Nothing to show</p>
+              </div>
+            </div>
           </div>
         </div>
         
@@ -474,15 +831,13 @@
       class="fixed inset-0 z-50 bg-background transform -translate-x-full transition-transform duration-300 ease-in-out"
     >
       <!-- Overlay Header -->
-      <div class="flex items-center justify-between h-16 px-2">
+      <div class="flex items-center justify-between h-16 px-4">
         <!-- Wordmark -->
-        <div class="flex items-center">
-          <img 
-            src="../assets/wordmark.svg" 
-            alt="Convoak" 
-            class="h-5 w-auto dark:invert transition-all duration-200"
-          >
-        </div>
+        <img 
+          src="../assets/wordmark.svg" 
+          alt="Convoak" 
+          class="h-5 w-auto ml-1 dark:invert transition-all duration-200"
+        >
         
         <!-- Close Button -->
         <button 
@@ -495,7 +850,7 @@
       </div>
 
       <!-- Overlay Content -->
-      <div class="flex flex-col h-[calc(100vh-4rem)] px-2 py-4">
+      <div class="flex flex-col h-[calc(100vh-4rem)] px-4 py-4">
         <!-- Navigation Links -->
         <nav class="flex-1 space-y-1">
           <a 
@@ -647,6 +1002,46 @@
     }
 
     // ===== Desktop Search Functions =====
+    let desktopExpandedVisible = false;
+    let desktopActiveCategory = 'live';
+    
+    function expandDesktopSearch() {
+      const collapsed = document.getElementById('desktop-search-collapsed');
+      const expanded = document.getElementById('desktop-search-expanded');
+      const input = document.getElementById('desktop-search-input');
+      const pageWrapper = document.getElementById('page-wrapper');
+      
+      collapsed.classList.add('hidden');
+      expanded.classList.remove('hidden');
+      desktopExpandedVisible = true;
+      
+      // Enable page scroll on smaller screens (below 2xl breakpoint ~1536px)
+      if (window.innerWidth < 1536) {
+        pageWrapper.classList.remove('overflow-hidden');
+        pageWrapper.classList.add('overflow-y-auto');
+      }
+      
+      // Focus input and reinitialize icons
+      setTimeout(() => {
+        input.focus();
+        lucide.createIcons();
+      }, 50);
+    }
+    
+    function collapseDesktopSearch() {
+      const collapsed = document.getElementById('desktop-search-collapsed');
+      const expanded = document.getElementById('desktop-search-expanded');
+      const pageWrapper = document.getElementById('page-wrapper');
+      
+      expanded.classList.add('hidden');
+      collapsed.classList.remove('hidden');
+      desktopExpandedVisible = false;
+      
+      // Restore overflow hidden
+      pageWrapper.classList.remove('overflow-y-auto');
+      pageWrapper.classList.add('overflow-hidden');
+    }
+    
     function handleDesktopInput(input) {
       const clearBtn = document.getElementById('desktop-clear-btn');
       const randomizeBtn = document.getElementById('desktop-randomize-btn');
@@ -688,12 +1083,72 @@
       ];
       const input = document.getElementById('desktop-search-input');
       const randomQuery = queries[Math.floor(Math.random() * queries.length)];
-      input.value = randomQuery;
-      handleDesktopInput(input);
-      input.focus();
+      
+      // If collapsed, expand first
+      if (!desktopExpandedVisible) {
+        expandDesktopSearch();
+        setTimeout(() => {
+          input.value = randomQuery;
+          handleDesktopInput(input);
+        }, 100);
+      } else {
+        input.value = randomQuery;
+        handleDesktopInput(input);
+        input.focus();
+      }
     }
+    
+    function setDesktopCategory(category) {
+      desktopActiveCategory = category;
+      const categories = ['live', 'history', 'trending', 'recommended'];
+      
+      // Update button styles
+      categories.forEach(cat => {
+        const btn = document.getElementById(`desktop-category-${cat}`);
+        if (cat === category) {
+          btn.classList.remove('bg-zinc-100', 'dark:bg-zinc-700', 'text-muted-foreground', 'hover:bg-zinc-200', 'dark:hover:bg-zinc-600', 'hover:text-accent-foreground');
+          btn.classList.add('bg-primary', 'text-primary-foreground');
+        } else {
+          btn.classList.remove('bg-primary', 'text-primary-foreground');
+          btn.classList.add('bg-zinc-100', 'dark:bg-zinc-700', 'text-muted-foreground', 'hover:bg-zinc-200', 'dark:hover:bg-zinc-600', 'hover:text-accent-foreground');
+        }
+      });
+      
+      // Show/hide results
+      const emptyState = document.getElementById('desktop-empty-state');
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+      
+      categories.forEach(cat => {
+        const results = document.getElementById(`desktop-results-${cat}`);
+        if (cat === category) {
+          results.classList.remove('hidden');
+          results.classList.add('flex');
+        } else {
+          results.classList.add('hidden');
+          results.classList.remove('flex');
+        }
+      });
+    }
+    
+    function selectDesktopResult(query) {
+      const input = document.getElementById('desktop-search-input');
+      input.value = query;
+      handleDesktopInput(input);
+      collapseDesktopSearch();
+    }
+    
+    // Close desktop expanded when clicking outside
+    document.addEventListener('click', (e) => {
+      const desktopSearch = document.querySelector('.hidden.md\\:block.w-full.max-w-\\[43rem\\]');
+      if (desktopSearch && !desktopSearch.contains(e.target) && desktopExpandedVisible) {
+        collapseDesktopSearch();
+      }
+    });
 
     // ===== Mobile Search Functions =====
+    let mobileActiveCategory = 'live';
+    
     function openMobileSearch() {
       const modal = document.getElementById('mobile-search-modal');
       const input = document.getElementById('mobile-search-input');
@@ -701,7 +1156,10 @@
       modal.classList.add('translate-y-0');
       document.body.style.overflow = 'hidden';
       // Auto-focus input immediately
-      setTimeout(() => input.focus(), 50);
+      setTimeout(() => {
+        input.focus();
+        lucide.createIcons();
+      }, 50);
     }
 
     function closeMobileSearch() {
@@ -755,6 +1213,45 @@
       input.value = randomQuery;
       handleMobileInput(input);
       input.focus();
+    }
+    
+    function setMobileCategory(category) {
+      mobileActiveCategory = category;
+      const categories = ['live', 'history', 'trending', 'recommended'];
+      
+      // Update button styles
+      categories.forEach(cat => {
+        const btn = document.getElementById(`mobile-category-${cat}`);
+        if (cat === category) {
+          btn.classList.remove('bg-zinc-100', 'dark:bg-zinc-700', 'text-muted-foreground', 'hover:bg-zinc-200', 'dark:hover:bg-zinc-600', 'hover:text-accent-foreground');
+          btn.classList.add('bg-primary', 'text-primary-foreground');
+        } else {
+          btn.classList.remove('bg-primary', 'text-primary-foreground');
+          btn.classList.add('bg-zinc-100', 'dark:bg-zinc-700', 'text-muted-foreground', 'hover:bg-zinc-200', 'dark:hover:bg-zinc-600', 'hover:text-accent-foreground');
+        }
+      });
+      
+      // Show/hide results
+      const emptyState = document.getElementById('mobile-empty-state');
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+      
+      categories.forEach(cat => {
+        const results = document.getElementById(`mobile-results-${cat}`);
+        if (cat === category) {
+          results.classList.remove('hidden');
+          results.classList.add('flex');
+        } else {
+          results.classList.add('hidden');
+          results.classList.remove('flex');
+        }
+      });
+    }
+    
+    function selectMobileResult(query) {
+      const input = document.getElementById('mobile-search-input');
+      input.value = query;
+      handleMobileInput(input);
     }
 
     // ===== Initialize =====
